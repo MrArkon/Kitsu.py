@@ -1,0 +1,8 @@
+.git/
+docs/
+dist/
+tests/
+.vscode/
+__pycache__/
+
+poetry.lock
