@@ -1,7 +1,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <h3 align="center">Kitsu.py</h3>
+  <h2 align="center">Kitsu.py</h2>
   <p align="center">
     <a href="https://github.com/MrArkon/kitsu.py/graphs/contributors" allign="center">
       <img src="https://img.shields.io/github/contributors/MrArkon/kitsu.py.svg?style=for-the-badge" />
