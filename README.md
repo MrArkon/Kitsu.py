@@ -20,7 +20,7 @@
     </a>
   </p>
   <p align="center">
-    A simple asynchronous python wrapper for the <a href="https://kitsu.io/">Kitsu.io</a> API
+    A simple & lightweight JSON client for the <a href="https://kitsu.io/">Kitsu.io</a> API
     <br />
     <br />
     <a href="https://pypi.org/project/kitsu.py/">PyPi</a>
