@@ -36,15 +36,16 @@ class KitsuError(Exception):
     def __init__(self, message: Optional[str], *args: Any, **kwargs: Any) -> None:
         super().__init__(message, *args, **kwargs)
 
+
 class HTTPException(Exception):
 
-    def __init__(self, 
-                 title: Optional[str], 
-                 detail: Optional[str], 
-                 code: Optional[Union[str, int]], 
-                 *args: Any, 
+    def __init__(self,
+                 title: Optional[str],
+                 detail: Optional[str],
+                 code: Optional[Union[str, int]],
+                 *args: Any,
                  **kwargs: Any
-                ) -> None:
+                 ) -> None:
         super().__init__(title, detail, code, *args, **kwargs)
 
         self.title: Optional[str] = title

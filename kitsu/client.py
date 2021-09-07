@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import logging
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import aiohttp
 
@@ -61,7 +61,7 @@ class Client:
     async def get_anime(self,
                         _id: int,
                         *, raw: bool = False
-                       ) -> Union[Anime, dict]:
+                        ) -> Union[Anime, List[Anime], dict]:
         """Get information of an anime by ID"""
         try:
             async with self._session.get(
@@ -78,20 +78,14 @@ class Client:
                     return Anime(data=data["data"])
 
                 else:
+                    if response.status == 400:
+                        raise HTTPException(title=data["errors"][0]["title"],
+                                            detail=data["errors"][0]["detail"],
+                                            code=400)
                     if response.status == 404:
-                        try:
-                            raise HTTPException(title=data["errors"][0]["title"],
-                                                detail=data["errors"][0]["detail"],
-                                                code=404)
-                        except Exception:
-                            pass
-                    elif response.status == 400:
-                        try:
-                            raise HTTPException(title=data["errors"][0]["title"],
-                                                detail=data["errors"][0]["detail"],
-                                                code=400)
-                        except Exception:
-                            pass
+                        raise HTTPException(title=data["errors"][0]["title"],
+                                            detail=data["errors"][0]["detail"],
+                                            code=404)
 
                     raise KitsuError(
                         f"API returned a non 200 status code: {response.status}")
@@ -105,10 +99,41 @@ class Client:
                            *, raw: bool = False
                            ) -> Optional[Union[Anime, dict]]:
         """
-        Search for an anime [Not Implemented Yet]
+        Search for an anime
         """
-        async with self._session.get(url=f"{BASE}/anime?filter%5Btext%5B={str(query)}&page%5Blimit%5B={limit}", headers=HEADERS) as response:
-            raise NotImplementedError
+        try:
+            async with self._session.get(
+                url=f"{BASE}/anime?filter[text]={str(query)}&page[limit]={limit}",
+                headers=HEADERS,
+                timeout=aiohttp.ClientTimeout(total=15.0, connect=10.0)
+            ) as response:
+                data = await response.json()
+
+                if response.status == 200:
+                    if raw:
+                        return data
+
+                    if not data["data"]:
+                        raise KitsuError("No results found for your query.")
+                    elif len(data["data"]) == 1:
+                        return Anime(data["data"][0])
+                    else:
+                        return [Anime(data=_data) for _data in data["data"]]
+
+                else:
+                    if response.status == 400:
+                        raise HTTPException(title=data["errors"][0]["title"],
+                                            detail=data["errors"][0]["detail"],
+                                            code=400)
+                    if response.status == 404:
+                        raise HTTPException(title=data["errors"][0]["title"],
+                                            detail=data["errors"][0]["detail"],
+                                            code=404)
+
+                    raise KitsuError(
+                        f"API returned a non 200 status code: {response.status}")
+        except aiohttp.ServerTimeoutError:
+            raise ServerTimeout(message="Server timed out.")
 
     async def close(self) -> None:
         """Safely close the client"""

@@ -182,7 +182,7 @@ class Anime:
             return int(self._data["attributes"]["episodeCount"])
         except KeyError:
             return None
-    
+
     @property
     def episode_length(self) -> Optional[str]:
         try:
@@ -197,3 +197,7 @@ class Anime:
     @property
     def show_type(self) -> Optional[str]:
         return self._data["attributes"].get("showType", None)
+
+    @property
+    def nsfw(self) -> Optional[bool]:
+        return self._data["attributes"].get("nsfw", None)
