@@ -54,7 +54,7 @@ class Client:
         if session is not None:
             if not isinstance(session, aiohttp.ClientSession):
                 raise ValueError(
-                    "`session` must be an `aiohttp.aiohttp.ClientSession` instance")
+                    "`session` must be an `aiohttp.ClientSession` instance")
 
         self._session: aiohttp.ClientSession = session or aiohttp.ClientSession()
 
@@ -103,8 +103,9 @@ class Client:
         """
         try:
             async with self._session.get(
-                url=f"{BASE}/anime?filter[text]={str(query)}&page[limit]={limit}",
+                url=f"{BASE}/anime",
                 headers=HEADERS,
+                params={"filter[text]": query, "page[limit]": str(limit)},
                 timeout=aiohttp.ClientTimeout(total=15.0, connect=10.0)
             ) as response:
                 data = await response.json()
