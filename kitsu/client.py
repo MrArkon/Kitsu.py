@@ -136,5 +136,5 @@ class Client:
             raise ServerTimeout(message="Server timed out.")
 
     async def close(self) -> None:
-        """Safely close the client"""
+        """Close the aiohttp session"""
         await self._session.close()

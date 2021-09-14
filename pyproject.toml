@@ -1,22 +1,22 @@
 [tool.poetry]
-name = "kitsu.py"
-version = "0.1.0a1"
+name        = "kitsu.py"
+version     = "0.1.0a1"
 description = "A simple asynchronous python wrapper for the kitsu.io API"
-authors = ["MrArkon"]
+authors     = ["MrArkon"]
 maintainers = ["MrArkon"]
-license = "MIT"
-readme = "README.md"
-repository = "https://github.com/MrArkon/kitsu.py/"
-packages = [
+license     = "MIT"
+readme      = "README.md"
+repository  = "https://github.com/MrArkon/kitsu.py/"
+packages    = [
     { include = "kitsu" },
-    { include = "LICENSE.txt"},
+    { include = "LICENSE.txt"}
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-aiohttp = "^3.7.4"
+python          = "^3.8"
+aiohttp         = "^3.7.4"
 python-dateutil = "^2.8.2"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires      = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
