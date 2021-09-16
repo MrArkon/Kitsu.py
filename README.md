@@ -70,7 +70,7 @@ loop.run_until_complete(main())
 ```
 This prints:
 ```
-
+Canonical Title: Jujutsu Kaisen
 ```
 
 ## License
