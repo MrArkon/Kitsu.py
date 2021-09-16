@@ -38,6 +38,41 @@ Python 3.8+
 * [aiohttp](https://pypi.org/project/aiohttp/)
 * [python-dateutil](https://pypi.org/project/aiohttp/)
 
+## Installing
+To install the library, run the following commands:
+```shell
+# Linux/MacOS
+python3 -m pip install -U kitsu.py
+
+# Windows
+py -3 -m pip install -U kitsu.py
+```
+
+## Getting started
+
+Search for an anime:
+```python
+import kitsu
+import asyncio
+
+client = kitsu.Client()
+
+async def main():
+    data = await client.search_anime("jujutsu kaisen", limit=1)
+    
+    print("Canonical Title: " + data.canonical_title)
+    
+    # Close the internal aiohttp ClientSession
+    await client.close()
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+```
+This prints:
+```
+
+```
+
 ## License
 
 This project is distributed under the [MIT](https://github.com/MrArkon/kitsu.py/blob/master/LICENSE.txt) license.
