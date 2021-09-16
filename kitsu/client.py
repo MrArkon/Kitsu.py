@@ -73,7 +73,7 @@ class Client:
 
                 if response.status == 200:
                     if raw:
-                        return data["data"][0]
+                        return data["data"]
 
                     return Anime(data=data["data"])
 
@@ -95,7 +95,7 @@ class Client:
 
     async def search_anime(self,
                            query: str,
-                           limit: int = 5,
+                           limit: int = 1,
                            *, raw: bool = False
                            ) -> Optional[Union[Anime, dict]]:
         """
