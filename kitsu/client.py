@@ -67,7 +67,7 @@ class Client:
             async with self._session.get(
                 url=f"{BASE}/anime/{_id}",
                 headers=HEADERS,
-                timeout=aiohttp.ClientTimeout(total=15.0, connect=10.0)
+                timeout=aiohttp.ClientTimeout(total=30.0, connect=20.0)
             ) as response:
                 data = await response.json()
 
@@ -106,7 +106,7 @@ class Client:
                 url=f"{BASE}/anime",
                 headers=HEADERS,
                 params={"filter[text]": query, "page[limit]": str(limit)},
-                timeout=aiohttp.ClientTimeout(total=15.0, connect=10.0)
+                timeout=aiohttp.ClientTimeout(total=30.0, connect=20.0)
             ) as response:
                 data = await response.json()
 
