@@ -28,6 +28,16 @@
   </p>
 </p>
 
+## Key Features
+* Modern Pythonic API using `async` and `await`
+* Fully type checked
+
+## Requirements
+
+Python 3.8+
+* [aiohttp](https://pypi.org/project/aiohttp/)
+* [python-dateutil](https://pypi.org/project/aiohttp/)
+
 ## License
 
-This project is distributed under the MIT license.
+This project is distributed under the [MIT](https://github.com/MrArkon/kitsu.py/blob/master/LICENSE.txt) license.
