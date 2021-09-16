@@ -28,6 +28,9 @@
   </p>
 </p>
 
+## Note
+This library is still under development there might be bugs and some things may not work as expected/intended. Please open an issue if you encounter any bugs.
+
 ## Key Features
 * Modern Pythonic API using `async` and `await`
 * Fully type checked
