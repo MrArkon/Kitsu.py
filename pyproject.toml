@@ -18,6 +18,8 @@ classifiers = [
     "Topic :: Games/Entertainment",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",    
     "Intended Audience :: Developers"
 ]
 
@@ -25,6 +27,9 @@ classifiers = [
 python          = "^3.8"
 aiohttp         = "^3.7.4"
 python-dateutil = "^2.8.2"
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/MrArkon/kitsu.py/issues"
 
 [build-system]
 requires      = ["poetry-core>=1.0.0"]
