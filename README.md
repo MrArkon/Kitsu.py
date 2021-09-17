@@ -1,5 +1,7 @@
 # Kitsu.py
-A simple & lightweight async JSON:API wrapper for the [Kitsu.io](https://kitsu.io) API.
+[![PyPI](https://badge.fury.io/py/kitsu.py.svg)](https://pypi.org/project/kitsu.py)
+
+A simple async python wrapper for the [Kitsu.io](https://kitsu.io) API.
 
 ## Key Features
 * Simple and modern Pythonic API using `async/await`
@@ -47,6 +49,7 @@ This prints:
 Canonical Title: Jujutsu Kaisen
 Average Rating: 85.98
 ```
+You can find more examples in the [examples](https://github.com/MrArkon/kitsu.py/tree/master/examples/) directory.
 
 ## License
 
