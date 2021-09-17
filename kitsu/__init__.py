@@ -19,3 +19,7 @@ __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 from .client import Client
 from .errors import KitsuError, HTTPException
 from .models import Anime
+
+from logging import getLogger, NullHandler
+
+getLogger(__name__).addHandler(NullHandler())
