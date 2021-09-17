@@ -1,7 +1,7 @@
 # Kitsu.py
 [![PyPI](https://badge.fury.io/py/kitsu.py.svg)](https://pypi.org/project/kitsu.py)
 
-A simple & lightweight async JSON:API wrapper for the [Kitsu.io](https://kitsu.io) API.
+A simple async python wrapper for the [Kitsu.io](https://kitsu.io) API.
 
 ## Key Features
 * Simple and modern Pythonic API using `async/await`
