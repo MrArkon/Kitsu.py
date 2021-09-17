@@ -9,7 +9,7 @@ readme      = "README.md"
 repository  = "https://github.com/MrArkon/kitsu.py/"
 packages    = [
     { include = "kitsu" },
-    { include = "LICENSE.txt"}
+    { include = "LICENSE"}
 ]
 keywords    = ["kitsu", "async kitsu", "kitsu.py", "kitsu api wrapper"]
 classifiers = [
