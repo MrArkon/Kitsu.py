@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Optional, Literal
+from typing import Any, Dict, List, Literal, Optional
 
 from dateutil.parser import isoparse
 from datetime import datetime
@@ -33,8 +33,8 @@ __all__ = ("Anime",)
 
 class Anime:
 
-    def __init__(self, data: dict) -> None:
-        self._data: dict = data
+    def __init__(self, data: Dict[str, Any]) -> None:
+        self._data: Dict[str, Any] = data
 
     def __repr__(self) -> str:
         return f"<Anime id={self.id}>"
@@ -82,7 +82,7 @@ class Anime:
         return self._data["attributes"].get("canonicalTitle", None)
 
     @property
-    def abbreviated_titles(self) -> Optional[list]:
+    def abbreviated_titles(self) -> Optional[List[str]]:
         return self._data["attributes"].get("abbreviatedTitles", None)
 
     @property
@@ -114,7 +114,7 @@ class Anime:
             return None
 
     @property
-    def start_date(self) -> Optional[str]:
+    def start_date(self) -> Optional[datetime]:
         try:
             return datetime.strptime(self._data["attributes"]["startDate"], "%Y-%m-%d")
         except KeyError:
@@ -184,7 +184,7 @@ class Anime:
             return None
 
     @property
-    def episode_length(self) -> Optional[str]:
+    def episode_length(self) -> Optional[int]:
         try:
             return int(self._data["attributes"]["episodeLength"])
         except KeyError:
