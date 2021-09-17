@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Literal, Optional
+from typing import List, Literal, Optional
 
 from dateutil.parser import isoparse
 from datetime import datetime
@@ -33,8 +33,8 @@ __all__ = ("Anime",)
 
 class Anime:
 
-    def __init__(self, data: Dict[str, Any]) -> None:
-        self._data: Dict[str, Any] = data
+    def __init__(self, data: dict) -> None:
+        self._data: dict = data
 
     def __repr__(self) -> str:
         return f"<Anime id={self.id}>"
