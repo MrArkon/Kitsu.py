@@ -1,15 +1,24 @@
 [tool.poetry]
 name        = "kitsu.py"
-version     = "0.1.0a1"
+version     = "0.1.1"
 description = "A simple asynchronous python wrapper for the kitsu.io API"
-authors     = ["MrArkon"]
-maintainers = ["MrArkon"]
+authors     = ["MrArkon <mrarkon@outlook.com>"]
+maintainers = ["MrArkon <mrarkon@outlook.com>"]
 license     = "MIT"
 readme      = "README.md"
 repository  = "https://github.com/MrArkon/kitsu.py/"
 packages    = [
     { include = "kitsu" },
     { include = "LICENSE.txt"}
+]
+keywords    = ["kitsu", "async kitsu", "kitsu.py", "kitsu api wrapper"]
+classifiers = [
+    "Topic :: Internet",
+    "Topic :: Utilities",
+    "Topic :: Games/Entertainment",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Intended Audience :: Developers"
 ]
 
 [tool.poetry.dependencies]
