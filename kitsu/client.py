@@ -58,10 +58,7 @@ class Client:
                         _id: int,
                         *, raw: bool = False
                         ) -> Union[Anime, List[Anime], dict]:
-        """Get information of an anime by ID
-        
-        :param _id: Id of the anime
-        """
+        """Get information of an anime by ID"""
         try:
             async with self._session.get(
                 url=f"{BASE}/anime/{_id}",
