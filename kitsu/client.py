@@ -39,6 +39,8 @@ HEADERS: Dict[str, str] = {
     "Accept": "application/vnd.api+json",
     "Content-Type": "application/vnd.api+json"
 }
+TIMEOUT_TOTAL = 30.0
+TIMEOUT_CONNECT = 20.0
 
 
 class Client:
@@ -67,7 +69,7 @@ class Client:
             async with self._session.get(
                 url=f"{BASE}/anime/{_id}",
                 headers=HEADERS,
-                timeout=aiohttp.ClientTimeout(total=30.0, connect=20.0)
+                timeout=aiohttp.ClientTimeout(total=TIMEOUT_TOTAL, connect=TIMEOUT_CONNECT)
             ) as response:
                 data = await response.json()
 
@@ -97,16 +99,14 @@ class Client:
                            query: str,
                            limit: int = 1,
                            *, raw: bool = False
-                           ) -> Optional[Union[Anime, dict]]:
-        """
-        Search for an anime
-        """
+                           ) -> Union[Anime, List[Anime], dict]:
+        """Search for an anime"""
         try:
             async with self._session.get(
                 url=f"{BASE}/anime",
                 headers=HEADERS,
                 params={"filter[text]": query, "page[limit]": str(limit)},
-                timeout=aiohttp.ClientTimeout(total=30.0, connect=20.0)
+                timeout=aiohttp.ClientTimeout(total=TIMEOUT_TOTAL, connect=TIMEOUT_CONNECT)
             ) as response:
                 data = await response.json()
 
@@ -136,6 +136,40 @@ class Client:
         except aiohttp.ServerTimeoutError:
             raise ServerTimeout(message="Server timed out.")
 
+    async def trending_anime(self, *, raw: bool = False) -> Union[List[Anime], dict]:
+        """Get treding anime"""
+        try:
+            async with self._session.get(
+                url=f"{BASE}/trending/anime",
+                headers=HEADERS,
+                timeout=aiohttp.ClientTimeout(total=TIMEOUT_TOTAL, connect=TIMEOUT_CONNECT)
+            ) as response:
+                data = await response.json()
+
+                if response.status == 200:
+                    if raw:
+                        return data
+
+                    if not data["data"]:
+                        raise KitsuError("No results found for your query.")
+                    else:
+                        return [Anime(data=_data) for _data in data["data"]]
+
+                else:
+                    if response.status == 400:
+                        raise HTTPException(title=data["errors"][0]["title"],
+                                            detail=data["errors"][0]["detail"],
+                                            code=400)
+                    if response.status == 404:
+                        raise HTTPException(title=data["errors"][0]["title"],
+                                            detail=data["errors"][0]["detail"],
+                                            code=404)
+
+                    raise KitsuError(
+                        f"API returned a non 200 status code: {response.status}")
+        except aiohttp.ServerTimeoutError:
+            raise ServerTimeout(message="Server timed out.")
+
     async def close(self) -> None:
-        """Close the aiohttp session"""
+        """Close the aiohttp ClientSession"""
         await self._session.close()
