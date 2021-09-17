@@ -1,8 +1,9 @@
-.git/
+# Python Files & Folders
+env/
 docs/
 dist/
-tests/
-.vscode/
 __pycache__/
 
+# Tools Files & Folders
+.vscode/
 poetry.lock
