@@ -71,7 +71,7 @@ class Client:
     async def get_anime(self,
                         _id: int,
                         *, raw: bool = False
-                        ) -> Union[Anime, List[Anime], Dict[str, Any]]:
+                        ) -> Union[Anime, List[Anime], dict]:
         """Get information of an anime by ID"""
         data = await self._get(url=f"{BASE}/anime/{_id}")
         
@@ -84,7 +84,7 @@ class Client:
                            query: str,
                            limit: int = 1,
                            *, raw: bool = False
-                           ) -> Optional[Union[Anime, List[Anime], Dict[str, Any]]]:
+                           ) -> Optional[Union[Anime, List[Anime], dict]]:
         """Search for an anime"""
         data = await self._get(url=f"{BASE}/anime", params={"filter[text]": query, "page[limit]": str(limit)})
 
@@ -98,7 +98,7 @@ class Client:
         else:
             return [Anime(data=_data) for _data in data["data"]]
 
-    async def trending_anime(self, *, raw: bool = False) -> Optional[Union[List[Anime], Dict[str, Any]]]:
+    async def trending_anime(self, *, raw: bool = False) -> Optional[Union[List[Anime], dict]]:
         """Get treding anime"""
         data = await self._get(f"{BASE}/trending/anime")
         if raw:
