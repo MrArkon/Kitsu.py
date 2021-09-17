@@ -19,8 +19,9 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Natural Language :: English",
-    "Operating System :: OS Independent",    
-    "Intended Audience :: Developers"
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Typing :: Typed"
 ]
 
 [tool.poetry.dependencies]
