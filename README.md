@@ -49,6 +49,7 @@ This prints:
 Canonical Title: Jujutsu Kaisen
 Average Rating: 85.98
 ```
+You can find more examples in the [examples](https://github.com/MrArkon/kitsu.py/tree/master/examples/) directory.
 
 ## License
 
