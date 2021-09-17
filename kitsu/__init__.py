@@ -13,11 +13,11 @@ __author__  = "MrArkon"
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2021-present MrArkon'
 
-__all__  = ('Client', 'KitsuError', 'HTTPException', 'Anime')
+__all__  = ('Client', 'HTTPException', 'BadRequest', 'NotFound', 'Anime')
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
 from .client import Client
-from .errors import KitsuError, HTTPException
+from .errors import HTTPException, BadRequest, NotFound
 from .models import Anime
 
 from logging import getLogger, NullHandler

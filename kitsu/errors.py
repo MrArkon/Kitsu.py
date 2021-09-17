@@ -23,35 +23,34 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Optional, Union
+from aiohttp import ClientResponse
 
-__all__ = ("KitsuError", "HTTPException")
-
-
-class KitsuError(Exception):
-    """
-    The base error
-    """
-
-    def __init__(self, message: Optional[str], *args: Any, **kwargs: Any) -> None:
-        super().__init__(message, *args, **kwargs)
+from typing import Optional
 
 
 class HTTPException(Exception):
+    """Generic API exception when the response code is a non 2xx error."""
 
-    def __init__(self,
-                 title: Optional[str],
-                 detail: Optional[str],
-                 code: Optional[Union[str, int]],
-                 *args: Any,
-                 **kwargs: Any
-                 ) -> None:
-        super().__init__(title, detail, code, *args, **kwargs)
-
-        self.title: Optional[str] = title
-        self.detail: Optional[str] = detail
-        self.code: Optional[Union[str, int]] = code
+    def __init__(self, response: ClientResponse, message: str, response_code: int) -> None:
+        self.response: ClientResponse = response
+        self.message: str = message
+        self.response_code: Optional[int] = response_code
+        super().__init__(self.response, self.message, self.response_code)
 
 
-class ServerTimeout(KitsuError):
-    pass
+class BadRequest(HTTPException):
+    """An exception for when the API query is malformed."""
+
+    def __init__(self, response: ClientResponse, message: str) -> None:
+        self.response: ClientResponse = response
+        self.message: str = message
+        super().__init__(response, message, 400)
+
+
+class NotFound(HTTPException):
+    """An exception for when the requested API item was not found."""
+
+    def __init__(self, response: ClientResponse, message: str) -> None:
+        self.response: ClientResponse = response
+        self.message: str = message
+        super().__init__(response, message, 404)
