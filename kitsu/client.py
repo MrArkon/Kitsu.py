@@ -44,13 +44,7 @@ TIMEOUT_CONNECT = 20.0
 
 
 class Client:
-    """
-    Initialisation
-    ~~~~~~~~~~~~~~
-
-    Represents a client connection that connects to Kitsu.io.
-    This class is used to interact with the Kitsu.io API
-    """
+    """Represents a client connection that connects to Kitsu.io. This class is used to interact with the Kitsu.io API"""
 
     def __init__(self, session: Optional[aiohttp.ClientSession] = None) -> None:
         if session is not None:
@@ -64,7 +58,10 @@ class Client:
                         _id: int,
                         *, raw: bool = False
                         ) -> Union[Anime, List[Anime], dict]:
-        """Get information of an anime by ID"""
+        """Get information of an anime by ID
+        
+        :param _id: Id of the anime
+        """
         try:
             async with self._session.get(
                 url=f"{BASE}/anime/{_id}",

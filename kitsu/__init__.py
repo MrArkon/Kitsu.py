@@ -1,7 +1,7 @@
 """
 Kitsu.io API Wrapper
 ~~~~~~~~~~~~~~~~~~~
-A simple async wrapper for the Kitsu.io API.
+A simple async python wrapper for the Kitsu.io API.
 :copyright: (c) 2021-present MrArkon
 :license: MIT, see LICENSE.txt for more details.
 
