@@ -24,12 +24,12 @@ SOFTWARE.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, List, Optional, Union
 
 import aiohttp
 
-from kitsu.models import Anime
-from kitsu.errors import BadRequest, HTTPException, NotFound
+from .models import Anime
+from .errors import BadRequest, HTTPException, NotFound
 
 __all__ = ("Client",)
 __log__: logging.Logger = logging.getLogger(__name__)
