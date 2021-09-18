@@ -37,13 +37,11 @@ class Anime:
         self._data: dict = data
 
     def __repr__(self) -> str:
-        return f"<Anime id={self.id}>"
+        return f"<Anime id={self.id} title='{self.title}'>"
 
     @property
     def id(self) -> Optional[int]:
-        """
-        Returns the anime ID
-        """
+        """The anime's ID."""
         return self._data.get("id", None)
 
     @property
@@ -74,8 +72,14 @@ class Anime:
     def synopsis(self) -> Optional[str]:
         return self._data["attributes"].get("synopsis", None)
 
-    def title(self, _format: Literal["en", "en_jp", "ja_jp"]) -> Optional[str]:
-        return self._data["attributes"]["titles"].get(_format, None)
+    @property
+    def title(self) -> str:
+        """The anime's title."""
+        title = self._data["attributes"]["titles"].get("en", None)
+        if title is None:
+            k = next(iter(self._data["attributes"]["titles"]))
+            return self._data["attributes"]["titles"][k]
+        return title
 
     @property
     def canonical_title(self) -> Optional[str]:
@@ -89,7 +93,7 @@ class Anime:
     def average_rating(self) -> Optional[float]:
         try:
             return float(self._data["attributes"]["averageRating"])
-        except KeyError:
+        except KeyError or TypeError:
             return None
 
     @property
