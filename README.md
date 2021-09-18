@@ -1,5 +1,5 @@
-# Kitsu.py
-[![PyPI](https://badge.fury.io/py/kitsu.py.svg)](https://pypi.org/project/kitsu.py) 
+# Kitsu.py: Python API wrapper for kitsu
+[![Latest version](https://img.shields.io/pypi/v/kitsu.py.svg?style=flat&label=Latest&color=%234B78E6&logo=&logoColor=white)](https://pypi.python.org/pypi/httpie)
 ![PyPI - License](https://img.shields.io/pypi/l/kitsu.py)
 [![CodeFactor](https://www.codefactor.io/repository/github/mrarkon/kitsu.py/badge/master)](https://www.codefactor.io/repository/github/mrarkon/kitsu.py/overview/master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
