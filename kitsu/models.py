@@ -32,7 +32,6 @@ __all__ = ("Anime",)
 
 
 class Anime:
-
     def __init__(self, data: dict) -> None:
         self._data: dict = data
 
@@ -155,7 +154,7 @@ class Anime:
             return None
 
     @property
-    def age_rating(self) -> Optional[Literal['G', 'PG', 'R', 'R18']]:
+    def age_rating(self) -> Optional[Literal["G", "PG", "R", "R18"]]:
         return self._data["attributes"].get("ageRating", None)
 
     @property
@@ -163,11 +162,11 @@ class Anime:
         return self._data["attributes"].get("ageRatingGuide", None)
 
     @property
-    def subtype(self) -> Optional[Literal['ONA', 'OVA', 'TV', 'movie', 'music', 'special']]:
+    def subtype(self) -> Optional[Literal["ONA", "OVA", "TV", "movie", "music", "special"]]:
         return self._data["attributes"].get("subtype", None)
 
     @property
-    def status(self) -> Optional[Literal['current', 'finished', 'tba', 'unreleased', 'upcoming']]:
+    def status(self) -> Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]]:
         try:
             return self._data["attributes"]["status"]
         except KeyError:
@@ -177,19 +176,15 @@ class Anime:
     def tba(self) -> Optional[str]:
         return self._data["attributes"].get("tba", None)
 
-    def poster_image(self,
-                     _type: Optional[Literal["tiny", "small",
-                                             "medium", "large", "original"]] = "original"
-                     ) -> Optional[str]:
+    def poster_image(
+        self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
+    ) -> Optional[str]:
         try:
             return self._data["attributes"]["posterImage"].get(_type, None)
         except AttributeError:
             return None
 
-    def cover_image(self,
-                    _type: Optional[Literal["tiny", "small",
-                                            "large", "original"]] = "original"
-                    ) -> Optional[str]:
+    def cover_image(self, _type: Optional[Literal["tiny", "small", "large", "original"]] = "original") -> Optional[str]:
         try:
             return self._data["attributes"]["coverImage"].get(_type, None)
         except AttributeError:

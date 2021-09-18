@@ -36,6 +36,7 @@ __log__: logging.Logger = logging.getLogger(__name__)
 
 BASE: str = "https://kitsu.io/api/edge"
 
+
 class Client:
     """User client used to interact with the Kitsu API"""
 
@@ -57,7 +58,7 @@ class Client:
 
         async with self._session.get(url=url, **kwargs) as response:
             data = await response.json()
-            
+
             if response.status == 200:
                 return data
 
@@ -68,23 +69,18 @@ class Client:
             else:
                 raise HTTPException(response, await response.text(), response.status)
 
-    async def get_anime(self,
-                        _id: int,
-                        *, raw: bool = False
-                        ) -> Union[Anime, List[Anime], dict]:
+    async def get_anime(self, _id: int, *, raw: bool = False) -> Union[Anime, List[Anime], dict]:
         """Get information of an anime by ID"""
         data = await self._get(url=f"{BASE}/anime/{_id}")
-        
+
         if raw:
             return data["data"]
 
         return Anime(data=data["data"])
 
-    async def search_anime(self,
-                           query: str,
-                           limit: int = 1,
-                           *, raw: bool = False
-                           ) -> Optional[Union[Anime, List[Anime], dict]]:
+    async def search_anime(
+        self, query: str, limit: int = 1, *, raw: bool = False
+    ) -> Optional[Union[Anime, List[Anime], dict]]:
         """Search for an anime"""
         data = await self._get(url=f"{BASE}/anime", params={"filter[text]": query, "page[limit]": str(limit)})
 
