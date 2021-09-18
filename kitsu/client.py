@@ -69,14 +69,14 @@ class Client:
 
             raise HTTPException(response, await response.text(), response.status)
 
-    async def get_anime(self, _id: int, *, raw: bool = False) -> Union[Anime, List[Anime], dict]:
+    async def get_anime(self, anime_id: int, *, raw: bool = False) -> Union[Anime, dict]:
         """Get information of an anime by ID"""
-        data = await self._get(url=f"{BASE}/anime/{_id}")
+        data = await self._get(url=f"{BASE}/anime/{anime_id}")
 
         if raw:
             return data["data"]
 
-        return Anime(data=data["data"])
+        return Anime(payload=data["data"])
 
     async def search_anime(
         self, query: str, limit: int = 1, *, raw: bool = False
@@ -92,7 +92,7 @@ class Client:
         elif len(data["data"]) == 1:
             return Anime(data["data"][0])
         else:
-            return [Anime(data=_data) for _data in data["data"]]
+            return [Anime(payload=payload) for payload in data["data"]]
 
     async def trending_anime(self, *, raw: bool = False) -> Optional[Union[List[Anime], dict]]:
         """Get treding anime"""
@@ -103,9 +103,8 @@ class Client:
         if not data["data"]:
             return None
         else:
-            return [Anime(data=_data) for _data in data["data"]]
+            return [Anime(payload=payload) for payload in data["data"]]
 
     async def close(self) -> None:
         """Closes the internal http session"""
         return await self._session.close()
-    

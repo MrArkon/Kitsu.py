@@ -32,16 +32,16 @@ __all__ = ("Anime",)
 
 
 class Anime:
-    def __init__(self, data: dict) -> None:
-        self._data: dict = data
+    def __init__(self, payload: dict) -> None:
+        self._payload: dict = payload
 
     def __repr__(self) -> str:
         return f"<Anime id={self.id} title='{self.title}'>"
-
+    
     @property
     def id(self) -> Optional[int]:
         """The anime's ID."""
-        return self._data.get("id", None)
+        return self._payload.get("id", None)
 
     @property
     def created_at(self) -> Optional[datetime]:
@@ -49,8 +49,10 @@ class Anime:
         Returns creation datetime
         """
         try:
-            return isoparse(self._data["attributes"]["createdAt"])
+            return isoparse(self._payload["attributes"]["createdAt"])
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @property
@@ -59,39 +61,45 @@ class Anime:
         Returns the last modified datetime
         """
         try:
-            return isoparse(self._data["attributes"]["updatedAt"])
+            return isoparse(self._payload["attributes"]["updatedAt"])
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @property
     def slug(self) -> Optional[str]:
-        return self._data["attributes"].get("slug", None)
+        return self._payload["attributes"].get("slug", None)
 
     @property
     def synopsis(self) -> Optional[str]:
-        return self._data["attributes"].get("synopsis", None)
+        return self._payload["attributes"].get("synopsis", None)
+
+    @property
+    def description(self) -> Optional[str]:
+        return self._payload["attributes"].get("description", None)
 
     @property
     def title(self) -> str:
         """The anime's title."""
-        title = self._data["attributes"]["titles"].get("en", None)
+        title = self._payload["attributes"]["titles"].get("en", None)
         if title is None:
-            k = next(iter(self._data["attributes"]["titles"]))
-            return self._data["attributes"]["titles"][k]
+            k = next(iter(self._payload["attributes"]["titles"]))
+            return self._payload["attributes"]["titles"][k]
         return title
 
     @property
     def canonical_title(self) -> Optional[str]:
-        return self._data["attributes"].get("canonicalTitle", None)
+        return self._payload["attributes"].get("canonicalTitle", None)
 
     @property
     def abbreviated_titles(self) -> Optional[List[str]]:
-        return self._data["attributes"].get("abbreviatedTitles", None)
+        return self._payload["attributes"].get("abbreviatedTitles", None)
 
     @property
     def average_rating(self) -> Optional[float]:
         try:
-            return float(self._data["attributes"]["averageRating"])
+            return float(self._payload["attributes"]["averageRating"])
         except KeyError:
             return None
         except TypeError:
@@ -99,15 +107,12 @@ class Anime:
 
     @property
     def rating_frequencies(self) -> Optional[Dict[str, str]]:
-        try:
-            return self._data["attributes"]["ratingFrequencies"]
-        except KeyError:
-            return None
+        return self._payload["attributes"].get("ratingFrequencies", None)
 
     @property
     def user_count(self) -> Optional[int]:
         try:
-            return int(self._data["attributes"]["userCount"])
+            return int(self._payload["attributes"]["userCount"])
         except KeyError:
             return None
         except TypeError:
@@ -116,7 +121,7 @@ class Anime:
     @property
     def favorites_count(self) -> Optional[int]:
         try:
-            return int(self._data["attributes"]["favoritesCount"])
+            return int(self._payload["attributes"]["favoritesCount"])
         except KeyError:
             return None
         except TypeError:
@@ -125,29 +130,35 @@ class Anime:
     @property
     def start_date(self) -> Optional[datetime]:
         try:
-            return datetime.strptime(self._data["attributes"]["startDate"], "%Y-%m-%d")
+            return datetime.strptime(self._payload["attributes"]["startDate"], "%Y-%m-%d")
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @property
     def end_date(self) -> Optional[datetime]:
         """Returns the end date as a datetime object"""
         try:
-            return datetime.strptime(self._data["attributes"]["endDate"], "%Y-%m-%d")
+            return datetime.strptime(self._payload["attributes"]["endDate"], "%Y-%m-%d")
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @property
     def popularity_rank(self) -> Optional[int]:
         try:
-            return int(self._data["attributes"]["popularityRank"])
+            return int(self._payload["attributes"]["popularityRank"])
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @property
     def rating_rank(self) -> Optional[int]:
         try:
-            return int(self._data["attributes"]["ratingRank"])
+            return int(self._payload["attributes"]["ratingRank"])
         except KeyError:
             return None
         except TypeError:
@@ -155,45 +166,42 @@ class Anime:
 
     @property
     def age_rating(self) -> Optional[Literal["G", "PG", "R", "R18"]]:
-        return self._data["attributes"].get("ageRating", None)
+        return self._payload["attributes"].get("ageRating", None)
 
     @property
     def age_rating_guide(self) -> Optional[str]:
-        return self._data["attributes"].get("ageRatingGuide", None)
+        return self._payload["attributes"].get("ageRatingGuide", None)
 
     @property
     def subtype(self) -> Optional[Literal["ONA", "OVA", "TV", "movie", "music", "special"]]:
-        return self._data["attributes"].get("subtype", None)
+        return self._payload["attributes"].get("subtype", None)
 
     @property
     def status(self) -> Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]]:
-        try:
-            return self._data["attributes"]["status"]
-        except KeyError:
-            return None
+        return self._payload["attributes"].get("status", None)
 
     @property
     def tba(self) -> Optional[str]:
-        return self._data["attributes"].get("tba", None)
+        return self._payload["attributes"].get("tba", None)
 
     def poster_image(
         self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
     ) -> Optional[str]:
         try:
-            return self._data["attributes"]["posterImage"].get(_type, None)
+            return self._payload["attributes"]["posterImage"].get(_type, None)
         except AttributeError:
             return None
 
     def cover_image(self, _type: Optional[Literal["tiny", "small", "large", "original"]] = "original") -> Optional[str]:
         try:
-            return self._data["attributes"]["coverImage"].get(_type, None)
+            return self._payload["attributes"]["coverImage"].get(_type, None)
         except AttributeError:
             return None
 
     @property
     def episode_count(self) -> Optional[int]:
         try:
-            return int(self._data["attributes"]["episodeCount"])
+            return int(self._payload["attributes"]["episodeCount"])
         except KeyError:
             return None
         except TypeError:
@@ -203,7 +211,7 @@ class Anime:
     def episode_length(self) -> Optional[int]:
         """length of each episode in minutes"""
         try:
-            return int(self._data["attributes"]["episodeLength"])
+            return int(self._payload["attributes"]["episodeLength"])
         except KeyError:
             return None
         except TypeError:
@@ -211,8 +219,8 @@ class Anime:
 
     @property
     def youtube_video_id(self) -> Optional[str]:
-        return self._data["attributes"].get("youtubeVideoId", None)
+        return self._payload["attributes"].get("youtubeVideoId", None)
 
     @property
     def nsfw(self) -> Optional[bool]:
-        return self._data["attributes"].get("nsfw", None)
+        return self._payload["attributes"].get("nsfw", None)
