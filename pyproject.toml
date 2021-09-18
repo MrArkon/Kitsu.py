@@ -1,6 +1,6 @@
 [tool.poetry]
 name        = "kitsu.py"
-version     = "0.2.0"
+version     = "0.1.2"
 description = "A simple async python wrapper for the kitsu.io API."
 authors     = ["MrArkon <mrarkon@outlook.com>"]
 maintainers = ["MrArkon <mrarkon@outlook.com>"]
@@ -31,6 +31,13 @@ python-dateutil = "^2.8.2"
 
 [tool.poetry.urls]
 "Bug Tracker" = "https://github.com/MrArkon/kitsu.py/issues"
+
+[tool.poetry.dev-dependencies]
+black = "^21.6b0"
+
+[tool.black]
+line-length = 125
+target-version = ["py39"]
 
 [build-system]
 requires      = ["poetry-core>=1.0.0"]
