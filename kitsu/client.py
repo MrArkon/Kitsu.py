@@ -66,8 +66,8 @@ class Client:
                 raise BadRequest(response, data["errors"][0]["detail"])
             if response.status == 404:
                 raise NotFound(response, data["errors"][0]["detail"])
-            else:
-                raise HTTPException(response, await response.text(), response.status)
+
+            raise HTTPException(response, await response.text(), response.status)
 
     async def get_anime(self, _id: int, *, raw: bool = False) -> Union[Anime, List[Anime], dict]:
         """Get information of an anime by ID"""
@@ -108,3 +108,4 @@ class Client:
     async def close(self) -> None:
         """Closes the internal http session"""
         return await self._session.close()
+    
