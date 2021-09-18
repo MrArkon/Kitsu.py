@@ -38,8 +38,11 @@ class Anime:
     def __repr__(self) -> str:
         return f"<Anime id={self.id} title='{self.title}'>"
     
+    def __str__(self) -> str:
+        return self.title
+    
     @property
-    def id(self) -> Optional[int]:
+    def id(self) -> str:
         """The anime's ID."""
         return self._payload.get("id", None)
 
