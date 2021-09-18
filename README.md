@@ -1,5 +1,5 @@
 # Kitsu.py
-[![PyPI](https://badge.fury.io/py/kitsu.py.svg)](https://pypi.org/project/kitsu.py)
+[![PyPI](https://badge.fury.io/py/kitsu.py.svg)](https://pypi.org/project/kitsu.py) ![PyPI - License](https://img.shields.io/pypi/l/kitsu.py)
 
 A simple async python wrapper for the [Kitsu.io](https://kitsu.io) API.
 
