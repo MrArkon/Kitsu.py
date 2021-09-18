@@ -1,6 +1,6 @@
 [tool.poetry]
 name        = "kitsu.py"
-version     = "0.1.1"
+version     = "0.1.2"
 description = "A simple async python wrapper for the kitsu.io API."
 authors     = ["MrArkon <mrarkon@outlook.com>"]
 maintainers = ["MrArkon <mrarkon@outlook.com>"]
