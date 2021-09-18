@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import List, Literal, Optional
+from typing import Dict, List, Literal, Optional
 
 from dateutil.parser import isoparse
 from datetime import datetime
@@ -97,9 +97,9 @@ class Anime:
             return None
 
     @property
-    def rating_frequencies(self) -> Optional[str]:
+    def rating_frequencies(self) -> Optional[Dict[str, str]]:
         try:
-            return str(self._data["attributes"]["ageRating"])
+            return self._data["attributes"]["ratingFrequencies"]
         except KeyError:
             return None
 
