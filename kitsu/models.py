@@ -93,7 +93,9 @@ class Anime:
     def average_rating(self) -> Optional[float]:
         try:
             return float(self._data["attributes"]["averageRating"])
-        except KeyError or TypeError:
+        except KeyError:
+            return None
+        except TypeError:
             return None
 
     @property
@@ -109,12 +111,16 @@ class Anime:
             return int(self._data["attributes"]["userCount"])
         except KeyError:
             return None
+        except TypeError:
+            return None
 
     @property
     def favorites_count(self) -> Optional[int]:
         try:
             return int(self._data["attributes"]["favoritesCount"])
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @property
@@ -145,22 +151,25 @@ class Anime:
             return int(self._data["attributes"]["ratingRank"])
         except KeyError:
             return None
+        except TypeError:
+            return None
+
+    @property
+    def age_rating(self) -> Optional[Literal['G', 'PG', 'R', 'R18']]:
+        return self._data["attributes"].get("ageRating", None)
 
     @property
     def age_rating_guide(self) -> Optional[str]:
         return self._data["attributes"].get("ageRatingGuide", None)
 
     @property
-    def subtype(self) -> Optional[str]:
-        try:
-            return str(self._data["attributes"]["subtype"])
-        except KeyError:
-            return None
+    def subtype(self) -> Optional[Literal['ONA', 'OVA', 'TV', 'movie', 'music', 'special']]:
+        return self._data["attributes"].get("subtype", None)
 
     @property
-    def status(self) -> Optional[str]:
+    def status(self) -> Optional[Literal['current', 'finished', 'tba', 'unreleased', 'upcoming']]:
         try:
-            return str(self._data["attributes"]["status"])
+            return self._data["attributes"]["status"]
         except KeyError:
             return None
 
@@ -172,13 +181,19 @@ class Anime:
                      _type: Optional[Literal["tiny", "small",
                                              "medium", "large", "original"]] = "original"
                      ) -> Optional[str]:
-        return self._data["attributes"]["posterImage"].get(_type, None)
+        try:
+            return self._data["attributes"]["posterImage"].get(_type, None)
+        except AttributeError:
+            return None
 
     def cover_image(self,
                     _type: Optional[Literal["tiny", "small",
                                             "large", "original"]] = "original"
                     ) -> Optional[str]:
-        return self._data["attributes"]["coverImage"].get(_type, None)
+        try:
+            return self._data["attributes"]["coverImage"].get(_type, None)
+        except AttributeError:
+            return None
 
     @property
     def episode_count(self) -> Optional[int]:
@@ -186,21 +201,22 @@ class Anime:
             return int(self._data["attributes"]["episodeCount"])
         except KeyError:
             return None
+        except TypeError:
+            return None
 
     @property
     def episode_length(self) -> Optional[int]:
+        """length of each episode in minutes"""
         try:
             return int(self._data["attributes"]["episodeLength"])
         except KeyError:
+            return None
+        except TypeError:
             return None
 
     @property
     def youtube_video_id(self) -> Optional[str]:
         return self._data["attributes"].get("youtubeVideoId", None)
-
-    @property
-    def show_type(self) -> Optional[str]:
-        return self._data["attributes"].get("showType", None)
 
     @property
     def nsfw(self) -> Optional[bool]:
