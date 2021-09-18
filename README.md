@@ -2,6 +2,7 @@
 [![PyPI](https://badge.fury.io/py/kitsu.py.svg)](https://pypi.org/project/kitsu.py) 
 ![PyPI - License](https://img.shields.io/pypi/l/kitsu.py)
 [![CodeFactor](https://www.codefactor.io/repository/github/mrarkon/kitsu.py/badge/master)](https://www.codefactor.io/repository/github/mrarkon/kitsu.py/overview/master)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 A simple async python wrapper for the [Kitsu.io](https://kitsu.io) API.
 
