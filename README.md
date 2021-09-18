@@ -1,7 +1,7 @@
 # Kitsu.py: Python API wrapper for kitsu
 [![Latest version](https://img.shields.io/pypi/v/kitsu.py.svg?style=flat&label=Latest&color=%234B78E6&logo=&logoColor=white)](https://pypi.python.org/pypi/httpie)
 ![PyPI - License](https://img.shields.io/pypi/l/kitsu.py)
-[![CodeFactor](https://www.codefactor.io/repository/github/mrarkon/kitsu.py/badge/master)](https://www.codefactor.io/repository/github/mrarkon/kitsu.py/overview/master)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a04e4a4edbb84f6ea6d0c5a091a912a5)](https://www.codacy.com/gh/MrArkon/kitsu.py/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrArkon/kitsu.py&amp;utm_campaign=Badge_Grade)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 A simple async python wrapper for the [Kitsu.io](https://kitsu.io) API.
