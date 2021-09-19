@@ -38,7 +38,7 @@ class Anime:
     def __repr__(self) -> str:
         return f"<Anime id={self.id} title='{self.title}'>"
     
-    def __str__(self) -> str:
+    def __str__(self) -> Optional[str]:
         return self.title
     
     @property
@@ -75,13 +75,12 @@ class Anime:
         return self._payload["attributes"].get("synopsis", None)
 
     @property
-    def title(self) -> str:
+    def title(self) -> Optional[str]:
         """The anime's title."""
-        title = self._payload["attributes"]["titles"].get("en", None)
-        if title is None:
-            k = next(iter(self._payload["attributes"]["titles"]))
-            return self._payload["attributes"]["titles"][k]
-        return title
+        value: Optional[str]
+        for value in self._payload["attributes"]["titles"].values():
+            if value:
+                return value
 
     @property
     def canonical_title(self) -> Optional[str]:
@@ -228,7 +227,7 @@ class Manga:
     def __repr__(self) -> str:
         return f"<Manga id={self.id} title='{self.title}'>"
     
-    def __str__(self) -> str:
+    def __str__(self) -> Optional[str]:
         return self.title
     
     @property
@@ -265,10 +264,9 @@ class Manga:
         return self._payload["attributes"].get("synopsis", None)
 
     @property
-    def title(self) -> str:
+    def title(self) -> Optional[str]:
         """The manga's title."""
-        title = self._payload["attributes"]["titles"].get("en", None)
-        if title is None:
-            k = next(iter(self._payload["attributes"]["titles"]))
-            return self._payload["attributes"]["titles"][k]
-        return title
+        value: Optional[str]
+        for value in self._payload["attributes"]["titles"].values():
+            if value:
+                return value

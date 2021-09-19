@@ -28,7 +28,7 @@ from typing import Any, List, Optional, Union
 
 import aiohttp
 
-from .models import Anime
+from .models import Anime, Manga
 from .errors import BadRequest, HTTPException, NotFound
 
 __all__ = ("Client",)
@@ -104,6 +104,15 @@ class Client:
             return None
         else:
             return [Anime(payload=payload) for payload in data["data"]]
+
+    async def get_manga(self, manga_id: int, *, raw: bool = False) -> Union[Manga, dict]:
+        """Get information of an anime by ID"""
+        data = await self._get(url=f"{BASE}/manga/{manga_id}")
+
+        if raw:
+            return data["data"]
+
+        return Manga(payload=data["data"])
 
     async def close(self) -> None:
         """Closes the internal http session"""
