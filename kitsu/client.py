@@ -43,6 +43,9 @@ class Client:
     def __init__(self, session: Optional[aiohttp.ClientSession] = None) -> None:
         self._session: aiohttp.ClientSession = session or aiohttp.ClientSession()
 
+    def __repr__(self) -> str:
+        return "<kitsu.Client>"
+
     async def _get(self, url: str, **kwargs: Any) -> Any:
         """Performs a GET request to the Kitsu API"""
 
