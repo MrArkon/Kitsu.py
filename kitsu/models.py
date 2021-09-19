@@ -28,7 +28,7 @@ from typing import Dict, List, Literal, Optional
 from dateutil.parser import isoparse
 from datetime import datetime
 
-__all__ = ("Anime",)
+__all__ = ("Anime", "Manga")
 
 
 class Anime:
@@ -48,9 +48,7 @@ class Anime:
 
     @property
     def created_at(self) -> Optional[datetime]:
-        """
-        Returns creation datetime
-        """
+        """creation datetime"""
         try:
             return isoparse(self._payload["attributes"]["createdAt"])
         except KeyError:
@@ -60,9 +58,7 @@ class Anime:
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """
-        Returns the last modified datetime
-        """
+        """Returns the last modified datetime"""
         try:
             return isoparse(self._payload["attributes"]["updatedAt"])
         except KeyError:
@@ -77,10 +73,6 @@ class Anime:
     @property
     def synopsis(self) -> Optional[str]:
         return self._payload["attributes"].get("synopsis", None)
-
-    @property
-    def description(self) -> Optional[str]:
-        return self._payload["attributes"].get("description", None)
 
     @property
     def title(self) -> str:
@@ -227,3 +219,56 @@ class Anime:
     @property
     def nsfw(self) -> Optional[bool]:
         return self._payload["attributes"].get("nsfw", None)
+
+
+class Manga:
+    def __init__(self, payload: dict) -> None:
+        self._payload: dict = payload
+
+    def __repr__(self) -> str:
+        return f"<Manga id={self.id} title='{self.title}'>"
+    
+    def __str__(self) -> str:
+        return self.title
+    
+    @property
+    def id(self) -> str:
+        """The manga's ID."""
+        return self._payload.get("id", None)
+
+    @property
+    def created_at(self) -> Optional[datetime]:
+        """creation datetime"""
+        try:
+            return isoparse(self._payload["attributes"]["createdAt"])
+        except KeyError:
+            return None
+        except TypeError:
+            return None
+
+    @property
+    def updated_at(self) -> Optional[datetime]:
+        """last modified datetime"""
+        try:
+            return isoparse(self._payload["attributes"]["updatedAt"])
+        except KeyError:
+            return None
+        except TypeError:
+            return None
+
+    @property
+    def slug(self) -> Optional[str]:
+        return self._payload["attributes"].get("slug", None)
+
+    @property
+    def synopsis(self) -> Optional[str]:
+        return self._payload["attributes"].get("synopsis", None)
+
+    @property
+    def title(self) -> str:
+        """The manga's title."""
+        title = self._payload["attributes"]["titles"].get("en", None)
+        if title is None:
+            k = next(iter(self._payload["attributes"]["titles"]))
+            return self._payload["attributes"]["titles"][k]
+        return title
