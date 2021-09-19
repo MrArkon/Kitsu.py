@@ -1,10 +1,17 @@
-# Kitsu.py: Python API wrapper for kitsu
-[![Latest version](https://img.shields.io/pypi/v/kitsu.py.svg?style=flat&label=Latest&color=%234B78E6&logo=&logoColor=white)](https://pypi.python.org/pypi/httpie)
-![PyPI - License](https://img.shields.io/pypi/l/kitsu.py)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a04e4a4edbb84f6ea6d0c5a091a912a5)](https://www.codacy.com/gh/MrArkon/kitsu.py/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrArkon/kitsu.py&amp;utm_campaign=Badge_Grade)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-
-A simple async python wrapper for the [Kitsu.io](https://kitsu.io) API.
+<h1 align="center">Kitsu.py</h1>
+<p align="center">
+    <a href="https://pypi.python.org/pypi/kitsu.py">
+        <img src="https://img.shields.io/pypi/v/kitsu.py.svg?style=for-the-badge&color=orange&logo=&logoColor=white" />
+    </a>
+    <a href="https://github.com/MrArkon/kitsu.py/blob/master/LICENSE">
+        <img src="https://img.shields.io/pypi/l/kitsu.py?style=for-the-badge" />
+    </a>
+    <a>
+    <a href="https://www.codacy.com/gh/MrArkon/kitsu.py/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrArkon/kitsu.py&amp;utm_campaign=Badge_Grade">
+        <img src="https://img.shields.io/codacy/grade/a04e4a4edbb84f6ea6d0c5a091a912a5?style=for-the-badge" />
+    </a>
+    <br> kitsu.py is an asynchronous API wrapper for Kitsu written in Python.
+</p>
 
 ## Key Features
 * Simple and modern Pythonic API using `async/await`
