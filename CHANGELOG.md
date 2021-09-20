@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NotFound` & `BadRequest` Exceptions
 ### Removed
 - `ServerTimeout` & `KitsuError` Exceptions
+## Fixed
+- title bug in `Anime`
 ### Changed
 - `_id` parameter to `anime_id` in `get_anime` & `search_anime`
 - Change badges style in README
