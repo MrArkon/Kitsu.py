@@ -33,7 +33,7 @@ python3 -m pip install -U kitsu.py
 py -3 -m pip install -U kitsu.py
 ```
 
-## Getting started
+## Usage
 
 Search for an anime:
 ```python
