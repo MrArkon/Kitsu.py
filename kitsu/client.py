@@ -117,6 +117,22 @@ class Client:
 
         return Manga(payload=data["data"])
 
+    async def search_manga(
+        self, query: str, limit: int = 1, *, raw: bool = False
+    ) -> Optional[Union[Manga, List[Manga], dict]]:
+        """Search for a manga"""
+        data = await self._get(url=f"{BASE}/manga", params={"filter[text]": query, "page[limit]": str(limit)})
+
+        if raw:
+            return data
+
+        if not data["data"]:
+            return None
+        elif len(data["data"]) == 1:
+            return Manga(data["data"][0])
+        else:
+            return [Manga(payload=payload) for payload in data["data"]]
+
     async def close(self) -> None:
         """Closes the internal http session"""
         return await self._session.close()
