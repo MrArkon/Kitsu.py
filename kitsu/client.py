@@ -28,8 +28,8 @@ from typing import Any, List, Optional, Union
 
 import aiohttp
 
-from .models import Anime, Manga
 from .errors import BadRequest, HTTPException, NotFound
+from .models import Anime, Manga
 
 __all__ = ("Client",)
 __log__: logging.Logger = logging.getLogger(__name__)

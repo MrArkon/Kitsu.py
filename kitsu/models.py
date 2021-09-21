@@ -23,10 +23,10 @@ SOFTWARE.
 """
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Dict, List, Literal, Optional
 
 from dateutil.parser import isoparse
-from datetime import datetime
 
 __all__ = ("Anime", "Manga")
 

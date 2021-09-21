@@ -23,9 +23,9 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from aiohttp import ClientResponse
-
 from typing import Optional
+
+from aiohttp import ClientResponse
 
 
 class HTTPException(Exception):

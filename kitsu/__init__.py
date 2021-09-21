@@ -16,10 +16,10 @@ __copyright__ = 'Copyright 2021-present MrArkon'
 __all__  = ('Client', 'HTTPException', 'BadRequest', 'NotFound', 'Anime', 'Manga')
 __path__ = __import__('pkgutil').extend_path(__path__, __name__)
 
-from .client import Client
-from .errors import HTTPException, BadRequest, NotFound
-from .models import Anime, Manga
+from logging import NullHandler, getLogger
 
-from logging import getLogger, NullHandler
+from .client import Client
+from .errors import BadRequest, HTTPException, NotFound
+from .models import Anime, Manga
 
 getLogger(__name__).addHandler(NullHandler())
