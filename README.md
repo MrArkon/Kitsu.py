@@ -15,7 +15,7 @@
 
 ## Key Features
 * Simple and modern Pythonic API using `async/await`
-* Fully type checked
+* Fully typed
 
 ## Requirements
 
