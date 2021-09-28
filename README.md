@@ -21,7 +21,7 @@
 
 Python 3.8+
 * [aiohttp](https://pypi.org/project/aiohttp/)
-* [python-dateutil](https://pypi.org/project/aiohttp/)
+* [python-dateutil](https://pypi.org/project/python-dateutil)
 
 ## Installing
 To install the library, run the following commands:
