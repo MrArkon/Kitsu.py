@@ -37,6 +37,12 @@ __log__: logging.Logger = logging.getLogger(__name__)
 BASE: str = "https://kitsu.io/api/edge"
 
 
+async def add_filters_to_params(filters: dict, params: dict) -> None:
+    for filterName, filterValue in filters:
+        param_name = "filter[%s]".format(filterName)
+        params[param_name] = filterValue
+
+
 class Client:
     """User client used to interact with the Kitsu API"""
 
@@ -82,10 +88,15 @@ class Client:
         return Anime(payload=data["data"])
 
     async def search_anime(
-        self, query: str, limit: int = 1, *, raw: bool = False
+        self, query: str, limit: int = 1, *, raw: bool = False, **filters
     ) -> Optional[Union[Anime, List[Anime], dict]]:
+
+        params = {"filter[text]": query, "page[limit]": str(limit)}
+
+        await add_filters_to_params(filters, params)
+
         """Search for an anime"""
-        data = await self._get(url=f"{BASE}/anime", params={"filter[text]": query, "page[limit]": str(limit)})
+        data = await self._get(url=f"{BASE}/anime", params=params)
 
         if raw:
             return data
@@ -118,10 +129,12 @@ class Client:
         return Manga(payload=data["data"])
 
     async def search_manga(
-        self, query: str, limit: int = 1, *, raw: bool = False
+        self, query: str, limit: int = 1, *, raw: bool = False, **filters
     ) -> Optional[Union[Manga, List[Manga], dict]]:
         """Search for a manga"""
-        data = await self._get(url=f"{BASE}/manga", params={"filter[text]": query, "page[limit]": str(limit)})
+        params = {"filter[text]": query, "page[limit]": str(limit)}
+        await add_filters_to_params(filters, params)
+        data = await self._get(url=f"{BASE}/manga", params=params)
 
         if raw:
             return data
