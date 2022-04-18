@@ -88,10 +88,10 @@ class Client:
         return Anime(payload=data["data"])
 
     async def search_anime(
-        self, query: str, limit: int = 1, *, raw: bool = False, **filters
+        self, query: str, limit: int = 1, offset: int = 0, *, raw: bool = False, **filters
     ) -> Optional[Union[Anime, List[Anime], dict]]:
 
-        params = {"page[limit]": str(limit)}
+        params = {"page[limit]": str(limit), "page[offset]": str(offset)}
         if query != '':
             params["filter[text]"] = query
 
@@ -131,10 +131,10 @@ class Client:
         return Manga(payload=data["data"])
 
     async def search_manga(
-        self, query: str, limit: int = 1, *, raw: bool = False, **filters
+        self, query: str, limit: int = 1, offset: int = 0, *, raw: bool = False, **filters
     ) -> Optional[Union[Manga, List[Manga], dict]]:
         """Search for a manga"""
-        params = {"page[limit]": str(limit)}
+        params = {"page[limit]": str(limit), "page[offset]": str(offset)}
         if query != '':
             params["filter[text]"] = query
 
