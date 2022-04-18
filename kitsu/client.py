@@ -91,7 +91,9 @@ class Client:
         self, query: str, limit: int = 1, *, raw: bool = False, **filters
     ) -> Optional[Union[Anime, List[Anime], dict]]:
 
-        params = {"filter[text]": query, "page[limit]": str(limit)}
+        params = {"page[limit]": str(limit)}
+        if query != '':
+            params["filter[text]"] = query
 
         await add_filters_to_params(filters, params)
 
@@ -132,7 +134,10 @@ class Client:
         self, query: str, limit: int = 1, *, raw: bool = False, **filters
     ) -> Optional[Union[Manga, List[Manga], dict]]:
         """Search for a manga"""
-        params = {"filter[text]": query, "page[limit]": str(limit)}
+        params = {"page[limit]": str(limit)}
+        if query != '':
+            params["filter[text]"] = query
+
         await add_filters_to_params(filters, params)
         data = await self._get(url=f"{BASE}/manga", params=params)
 
