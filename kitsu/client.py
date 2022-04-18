@@ -39,7 +39,7 @@ BASE: str = "https://kitsu.io/api/edge"
 
 async def add_filters_to_params(filters: dict, params: dict) -> None:
     for filterName, filterValue in filters.items():
-        param_name = "filter[%s]".format(filterName)
+        param_name = "filter[{}]".format(filterName)
         params[param_name] = filterValue
 
 
