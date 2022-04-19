@@ -1,7 +1,7 @@
-import kitsu
+import kitsu_extended
 import asyncio
 
-client = kitsu.Client()
+client = kitsu_extended.Client()
 
 async def main():
     data = await client.trending_anime()

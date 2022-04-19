@@ -50,7 +50,7 @@ class Client:
         self._session: aiohttp.ClientSession = session or aiohttp.ClientSession()
 
     def __repr__(self) -> str:
-        return "<kitsu.Client>"
+        return "<kitsu_extended.Client>"
 
     async def _get(self, url: str, **kwargs: Any) -> Any:
         """Performs a GET request to the Kitsu API"""

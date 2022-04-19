@@ -7,7 +7,7 @@ A simple async python wrapper for the Kitsu.io API.
 
 """
 
-__title__   = "kitsu"
+__title__   = "kitsu_extended"
 __version__ = "1.0.0"
 __author__  = "MrArkon"
 __license__ = 'MIT'

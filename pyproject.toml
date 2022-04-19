@@ -1,14 +1,14 @@
 [tool.poetry]
-name        = "kitsu.py"
-version     = "1.0.1"
-description = "kitsu.py is an asynchronous API wrapper for Kitsu written in Python."
-authors     = ["MrArkon <mrarkon@outlook.com>"]
-maintainers = ["MrArkon <mrarkon@outlook.com>"]
+name        = "kitsu.py_extended"
+version     = "1.0.4"
+description = "kitsu.py_extened is an asynchronous API wrapper for Kitsu written in Python. (Extend kitsu.py)"
+authors     = ["Dymattic <dymattic@naise.io>","MrArkon <mrarkon@outlook.com>"]
+maintainers = ["Dymattic <dymattic@naise.io>"]
 license     = "MIT"
 readme      = "README.md"
-repository  = "https://github.com/MrArkon/kitsu.py/"
+repository  = "https://github.com/dymattic/kitsu.py_extended/"
 packages    = [
-    { include = "kitsu" },
+    { include = "kitsu_extended" },
     { include = "LICENSE"}
 ]
 keywords    = ["kitsu", "async kitsu", "kitsu.py", "kitsu api wrapper"]
@@ -30,8 +30,8 @@ aiohttp         = "^3.7.4"
 python-dateutil = "^2.8.2"
 
 [tool.poetry.urls]
-"Bug Tracker" = "https://github.com/MrArkon/kitsu.py/issues"
-"Changelog" = "https://github.com/MrArkon/kitsu.py/blob/master/CHANGELOG.md"
+"Bug Tracker" = "https://github.com/dymattic/kitsu.py_extended/issues"
+"Changelog" = "https://github.com/dymattic/kitsu.py_extended/blob/master/CHANGELOG.md"
 
 [tool.poetry.dev-dependencies]
 black = "^21.6b0"

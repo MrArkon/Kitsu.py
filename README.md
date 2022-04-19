@@ -1,8 +1,5 @@
-<h1 align="center">Kitsu.py</h1>
+<h1 align="center">Kitsu.py_extended</h1>
 <p align="center">
-    <a href="https://pypi.python.org/pypi/kitsu.py">
-        <img src="https://img.shields.io/pypi/v/kitsu.py.svg?style=for-the-badge&color=orange&logo=&logoColor=white" />
-    </a>
     <a href="https://github.com/MrArkon/kitsu.py/blob/master/LICENSE">
         <img src="https://img.shields.io/pypi/l/kitsu.py?style=for-the-badge" />
     </a>
@@ -12,6 +9,11 @@
     </a>
     <br> kitsu.py is an asynchronous API wrapper for Kitsu written in Python.
 </p>
+
+
+
+## Important:
+This is a fork of [MrArkon/kitsu.py](https://github.com/MrArkon/kitsu.py)
 
 ## Key Features
 * Simple and modern Pythonic API using `async/await`
@@ -27,29 +29,32 @@ Python 3.8+
 To install the library, run the following commands:
 ```shell
 # Linux/MacOS
-python3 -m pip install -U kitsu.py
+python3 -m pip install -U kitsu_extended.py_extended
 
 # Windows
-py -3 -m pip install -U kitsu.py
+py -3 -m pip install -U kitsu_extended.py_extended
 ```
 
 ## Usage
 
 Search for an anime:
+
 ```python
-import kitsu
+import kitsu_extended
 import asyncio
 
-client = kitsu.Client()
+client = kitsu_extended.Client()
+
 
 async def main():
     anime = await client.search_anime("jujutsu kaisen", limit=1)
-    
+
     print("Canonical Title: " + anime.canonical_title)
     print("Average Rating: " + str(anime.average_rating))
-    
+
     # Close the internal aiohttp ClientSession
     await client.close()
+
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
