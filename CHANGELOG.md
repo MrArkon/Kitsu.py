@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Added more examples
+- Implemented filter functionality
 - Add `Manga` model
 - `get_manga` & `search_manga` methods
 - `NotFound` & `BadRequest` Exceptions
