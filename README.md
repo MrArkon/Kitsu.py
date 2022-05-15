@@ -16,6 +16,7 @@
 ## Key Features
 * Simple and modern Pythonic API using `async/await`
 * Fully typed
+* Filter & Limit functionality
 
 ## Requirements
 
@@ -60,6 +61,9 @@ Canonical Title: Jujutsu Kaisen
 Average Rating: 85.98
 ```
 You can find more examples in the [examples](https://github.com/MrArkon/kitsu.py/tree/master/examples/) directory.
+    
+## Contributors
+* [Dymattic](https://github.com/dymattic)
 
 ## License
 
