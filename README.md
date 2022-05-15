@@ -44,10 +44,16 @@ import asyncio
 client = kitsu.Client()
 
 async def main():
+    # Search a specific anime with the name
     anime = await client.search_anime("jujutsu kaisen", limit=1)
     
     print("Canonical Title: " + anime.canonical_title)
     print("Average Rating: " + str(anime.average_rating))
+    
+    # This returns a list of 5 animes in the spring season 2022
+    animes_in_spring = await client.search_anime(limit=5, season_year=2022, season='spring')
+    
+    print(*[a.title for a in animes_in_spring], sep=", ")
     
     # Close the internal aiohttp ClientSession
     await client.close()
@@ -59,6 +65,7 @@ This prints:
 ```
 Canonical Title: Jujutsu Kaisen
 Average Rating: 85.98
+That Time I Got Reincarnated as a Slime: Ramiris to the Rescue, Blue Thermal, Q&A=E, Smol Adventures, Estab-Life: Great Escape
 ```
 You can find more examples in the [examples](https://github.com/MrArkon/kitsu.py/tree/master/examples/) directory.
     
