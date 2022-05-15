@@ -72,6 +72,12 @@ class Client:
 
             raise HTTPException(response, await response.text(), response.status)
 
+    async def _insert_filters(self, filters: dict, params: dict) -> None:
+        # Credit to @Dymattic for this piece of code.
+        for filter_name, filter_value in filters.items():
+            param_name = f"filter[{filter_name}]"
+            params[param_name] = filter_value
+
     async def get_anime(self, anime_id: int, *, raw: bool = False) -> Union[Anime, dict]:
         """Get information of an anime by ID"""
         data = await self._get(url=f"{BASE}/anime/{anime_id}")
@@ -82,10 +88,17 @@ class Client:
         return Anime(payload=data["data"])
 
     async def search_anime(
-        self, query: str, limit: int = 1, *, raw: bool = False
+        self, query: str = "", limit: int = 1, *, raw: bool = False, **filters
     ) -> Optional[Union[Anime, List[Anime], dict]]:
         """Search for an anime"""
-        data = await self._get(url=f"{BASE}/anime", params={"filter[text]": query, "page[limit]": str(limit)})
+        params = {"page[limit]": str(limit)}
+
+        if query != "":
+            params["filter[text]"] = query
+
+        await self._insert_filters(filters, params)
+
+        data = await self._get(url=f"{BASE}/anime", params=params)
 
         if raw:
             return data
@@ -98,7 +111,7 @@ class Client:
             return [Anime(payload=payload) for payload in data["data"]]
 
     async def trending_anime(self, *, raw: bool = False) -> Optional[Union[List[Anime], dict]]:
-        """Get treding anime"""
+        """Get trending anime"""
         data = await self._get(f"{BASE}/trending/anime")
         if raw:
             return data
@@ -118,10 +131,17 @@ class Client:
         return Manga(payload=data["data"])
 
     async def search_manga(
-        self, query: str, limit: int = 1, *, raw: bool = False
+        self, query: str = "", limit: int = 1, *, raw: bool = False, **filters
     ) -> Optional[Union[Manga, List[Manga], dict]]:
         """Search for a manga"""
-        data = await self._get(url=f"{BASE}/manga", params={"filter[text]": query, "page[limit]": str(limit)})
+        params = {"page[limit]": str(limit)}
+
+        if query != "":
+            params["filter[text]"] = query
+
+        await self._insert_filters(filters, params)
+
+        data = await self._get(url=f"{BASE}/manga", params=params)
 
         if raw:
             return data
