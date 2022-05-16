@@ -122,7 +122,7 @@ class Client:
             return [Anime(payload=payload) for payload in data["data"]]
 
     async def get_manga(self, manga_id: int, *, raw: bool = False) -> Union[Manga, dict]:
-        """Get information of an anime by ID"""
+        """Get information of a manga by ID"""
         data = await self._get(url=f"{BASE}/manga/{manga_id}")
 
         if raw:
@@ -150,6 +150,17 @@ class Client:
             return None
         elif len(data["data"]) == 1:
             return Manga(data["data"][0])
+        else:
+            return [Manga(payload=payload) for payload in data["data"]]
+
+    async def trending_manga(self, *, raw: bool = False) -> Optional[Union[List[Manga], dict]]:
+        """Get trending manga"""
+        data = await self._get(f"{BASE}/trending/manga")
+        if raw:
+            return data
+
+        if not data["data"]:
+            return None
         else:
             return [Manga(payload=payload) for payload in data["data"]]
 
