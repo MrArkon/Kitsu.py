@@ -40,6 +40,7 @@ The First Release!
 - `KitsuError`, `HTTPException` & `ServerTimeout` errors
 - Description & Badges to README.md
 
+[Unreleased]: https://github.com/MrArkon/Kitsu.py
 [1.0.0]: https://github.com/MrArkon/kitsu.py/releases/tag/v1.0.0
 [0.1.1]: https://github.com/MrArkon/kitsu.py/releases/tag/v0.1.1
 [0.1.0]: https://github.com/MrArkon/kitsu.py/releases/tag/v0.1.0
