@@ -51,9 +51,7 @@ class Anime:
         """creation datetime"""
         try:
             return isoparse(self._payload["attributes"]["createdAt"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -61,9 +59,7 @@ class Anime:
         """Returns the last modified datetime"""
         try:
             return isoparse(self._payload["attributes"]["updatedAt"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -94,9 +90,7 @@ class Anime:
     def average_rating(self) -> Optional[float]:
         try:
             return float(self._payload["attributes"]["averageRating"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -107,27 +101,21 @@ class Anime:
     def user_count(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["userCount"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def favorites_count(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["favoritesCount"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def start_date(self) -> Optional[datetime]:
         try:
             return datetime.strptime(self._payload["attributes"]["startDate"], "%Y-%m-%d")
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -135,27 +123,21 @@ class Anime:
         """Returns the end date as a datetime object"""
         try:
             return datetime.strptime(self._payload["attributes"]["endDate"], "%Y-%m-%d")
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def popularity_rank(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["popularityRank"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def rating_rank(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["ratingRank"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -196,9 +178,7 @@ class Anime:
     def episode_count(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["episodeCount"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -206,9 +186,7 @@ class Anime:
         """length of each episode in minutes"""
         try:
             return int(self._payload["attributes"]["episodeLength"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -240,9 +218,7 @@ class Manga:
         """creation datetime"""
         try:
             return isoparse(self._payload["attributes"]["createdAt"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -250,9 +226,7 @@ class Manga:
         """last modified datetime"""
         try:
             return isoparse(self._payload["attributes"]["updatedAt"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -283,9 +257,7 @@ class Manga:
     def average_rating(self) -> Optional[float]:
         try:
             return float(self._payload["attributes"]["averageRating"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -296,54 +268,42 @@ class Manga:
     def user_count(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["userCount"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def favorites_count(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["favoritesCount"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def start_date(self) -> Optional[datetime]:
         try:
             return datetime.strptime(self._payload["attributes"]["startDate"], "%Y-%m-%d")
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def end_date(self) -> Optional[datetime]:
         try:
             return datetime.strptime(self._payload["attributes"]["endDate"], "%Y-%m-%d")
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def popularity_rank(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["popularityRank"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def rating_rank(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["ratingRank"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
@@ -384,18 +344,14 @@ class Manga:
     def chapter_count(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["chapterCount"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
     def volume_count(self) -> Optional[int]:
         try:
             return int(self._payload["attributes"]["volumeCount"])
-        except KeyError:
-            return None
-        except TypeError:
+        except (KeyError, TypeError):
             return None
 
     @property
