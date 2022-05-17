@@ -23,6 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
+import aiohttp
 from datetime import datetime
 from typing import Dict, List, Literal, Optional
 
@@ -32,14 +33,25 @@ __all__ = ("Anime", "Manga")
 
 
 class Anime:
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         self._payload: dict = payload
+        self._session: aiohttp.ClientSession = session
 
     def __repr__(self) -> str:
         return f"<Anime id={self.id} title='{self.title}'>"
 
     def __str__(self) -> Optional[str]:
         return self.title
+
+    async def _fetch_genres(self) -> Optional[list]:
+        headers = {"Accept": "application/vnd.api+json", "Content-Type": "application/vnd.api+json", "User-Agent":  "Kitsu.py (https://github.com/MrArkon/kitsu.py)"}
+        async with self._session.get(url=f"https://kitsu.io/api/edge/anime/{self.id}/genres", headers=headers) as response:
+            if response.status == 200:
+                _raw_data = await response.json()
+            else:
+                return None
+
+        return [data["attributes"]["name"] for data in _raw_data["data"]]
 
     @property
     def id(self) -> str:
@@ -85,6 +97,10 @@ class Anime:
     @property
     def abbreviated_titles(self) -> Optional[List[str]]:
         return self._payload["attributes"].get("abbreviatedTitles", None)
+
+    @property
+    async def genres(self) -> Optional[list]:
+        return await self._fetch_genres()
 
     @property
     def average_rating(self) -> Optional[float]:
@@ -199,14 +215,25 @@ class Anime:
 
 
 class Manga:
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         self._payload: dict = payload
+        self._session: aiohttp.ClientSession = session
 
     def __repr__(self) -> str:
         return f"<Manga id={self.id} title='{self.title}'>"
 
     def __str__(self) -> Optional[str]:
         return self.title
+
+    async def _fetch_genres(self) -> Optional[list]:
+        headers = {"Accept": "application/vnd.api+json", "Content-Type": "application/vnd.api+json", "User-Agent":  "Kitsu.py (https://github.com/MrArkon/kitsu.py)"}
+        async with self._session.get(url=f"https://kitsu.io/api/edge/manga/{self.id}/genres", headers=headers) as response:
+            if response.status == 200:
+                _raw_data = await response.json()
+            else:
+                return None
+
+        return [data["attributes"]["name"] for data in _raw_data["data"]]
 
     @property
     def id(self) -> str:
@@ -252,6 +279,10 @@ class Manga:
     @property
     def abbreviated_titles(self) -> Optional[List[str]]:
         return self._payload["attributes"].get("abbreviatedTitles", None)
+
+    @property
+    async def genres(self) -> Optional[list]:
+        return await self._fetch_genres()
 
     @property
     def average_rating(self) -> Optional[float]:

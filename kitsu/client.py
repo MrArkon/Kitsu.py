@@ -83,9 +83,9 @@ class Client:
         data = await self._get(url=f"{BASE}/anime/{anime_id}")
 
         if raw:
-            return data["data"]
+            return data
 
-        return Anime(payload=data["data"])
+        return Anime(data["data"], self._session)
 
     async def search_anime(
         self, query: str = "", limit: int = 1, *, raw: bool = False, **filters
@@ -106,9 +106,9 @@ class Client:
         if not data["data"]:
             return None
         elif len(data["data"]) == 1:
-            return Anime(data["data"][0])
+            return Anime(data["data"][0], self._session)
         else:
-            return [Anime(payload=payload) for payload in data["data"]]
+            return [Anime(payload, self._session) for payload in data["data"]]
 
     async def trending_anime(self, *, raw: bool = False) -> Optional[Union[List[Anime], dict]]:
         """Get trending anime"""
@@ -119,7 +119,7 @@ class Client:
         if not data["data"]:
             return None
         else:
-            return [Anime(payload=payload) for payload in data["data"]]
+            return [Anime(payload, self._session) for payload in data["data"]]
 
     async def get_manga(self, manga_id: int, *, raw: bool = False) -> Union[Manga, dict]:
         """Get information of a manga by ID"""
@@ -128,7 +128,7 @@ class Client:
         if raw:
             return data["data"]
 
-        return Manga(payload=data["data"])
+        return Manga(data["data"], self._session)
 
     async def search_manga(
         self, query: str = "", limit: int = 1, *, raw: bool = False, **filters
@@ -149,9 +149,9 @@ class Client:
         if not data["data"]:
             return None
         elif len(data["data"]) == 1:
-            return Manga(data["data"][0])
+            return Manga(data["data"][0], self._session)
         else:
-            return [Manga(payload=payload) for payload in data["data"]]
+            return [Manga(payload, self._session) for payload in data["data"]]
 
     async def trending_manga(self, *, raw: bool = False) -> Optional[Union[List[Manga], dict]]:
         """Get trending manga"""
@@ -162,7 +162,7 @@ class Client:
         if not data["data"]:
             return None
         else:
-            return [Manga(payload=payload) for payload in data["data"]]
+            return [Manga(payload, self._session) for payload in data["data"]]
 
     async def close(self) -> None:
         """Closes the internal http session"""
