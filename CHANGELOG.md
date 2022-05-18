@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `trending_manga` function
 - Added `Categories` (Replaced Genres) to Anime & Manga
 
+## Changed
+- Changed the title property in `Anime` & `Manga`
+  
+  Now you can get different types of titles, such as `anime.title.ja_jp` will now return the japanese name of the resource. `anime.title` still works as it did before.
+
 ## [1.0.0] - 2022-05-15
 ### Added
 - More examples
@@ -19,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NotFound` & `BadRequest` Exceptions
 ### Removed
 - `ServerTimeout` & `KitsuError` Exceptions
-## Fixed
+### Fixed
 - title bug in `Anime`
 ### Changed
 - `_id` parameter to `anime_id` in `get_anime` & `search_anime`
