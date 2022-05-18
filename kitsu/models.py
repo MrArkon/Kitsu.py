@@ -23,13 +23,58 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-import aiohttp
 from datetime import datetime
 from typing import Dict, List, Literal, Optional
 
+import aiohttp
 from dateutil.parser import isoparse
 
 __all__ = ("Anime", "Manga")
+
+
+class Category:
+    def __init__(self, data: dict) -> None:
+        self._data: dict = data
+
+    def __repr__(self) -> str:
+        return f"<Category id={self.id} title='{self.title}'>"
+
+    def __str__(self) -> Optional[str]:
+        return self.title
+
+    @property
+    def id(self) -> Optional[str]:
+        return self._data.get("id", None)
+
+    @property
+    def title(self) -> Optional[str]:
+        return self._data["attributes"].get("title", None)
+
+    @property
+    def created_at(self) -> Optional[datetime]:
+        try:
+            return isoparse(self._data["attributes"]["createdAt"])
+        except (KeyError, TypeError):
+            return None
+
+    @property
+    def updated_at(self) -> Optional[datetime]:
+        try:
+            return isoparse(self._data["attributes"]["updatedAt"])
+        except (KeyError, TypeError):
+            return None
+
+    @property
+    def description(self) -> Optional[str]:
+        return self._data["attributes"].get("description", None)
+
+    @property
+    def total_media_count(self) -> Optional[str]:
+        return self._data["attributes"].get("totalMediaCount", None)
+
+    @property
+    def nsfw(self) -> Optional[bool]:
+        return self._data["attributes"].get("nsfw", None)
 
 
 class Anime:
@@ -43,24 +88,32 @@ class Anime:
     def __str__(self) -> Optional[str]:
         return self.title
 
-    async def _fetch_genres(self) -> Optional[list]:
-        headers = {"Accept": "application/vnd.api+json", "Content-Type": "application/vnd.api+json", "User-Agent":  "Kitsu.py (https://github.com/MrArkon/kitsu.py)"}
-        async with self._session.get(url=f"https://kitsu.io/api/edge/anime/{self.id}/genres", headers=headers) as response:
+    async def _fetch_categories(self) -> Optional[List[Category]]:
+        headers = {
+            "Accept": "application/vnd.api+json",
+            "Content-Type": "application/vnd.api+json",
+            "User-Agent": "Kitsu.py (https://github.com/MrArkon/kitsu.py)",
+        }
+        async with self._session.get(
+            url=f"https://kitsu.io/api/edge/anime/{self.id}/categories", headers=headers
+        ) as response:
             if response.status == 200:
                 _raw_data = await response.json()
             else:
                 return None
 
-        return [data["attributes"]["name"] for data in _raw_data["data"]]
+        return [Category(data) for data in _raw_data["data"]]
 
     @property
-    def id(self) -> str:
-        """The anime's ID."""
+    async def categories(self) -> Optional[List[Category]]:
+        return await self._fetch_categories()
+
+    @property
+    def id(self) -> Optional[str]:
         return self._payload.get("id", None)
 
     @property
     def created_at(self) -> Optional[datetime]:
-        """creation datetime"""
         try:
             return isoparse(self._payload["attributes"]["createdAt"])
         except (KeyError, TypeError):
@@ -68,7 +121,6 @@ class Anime:
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """Returns the last modified datetime"""
         try:
             return isoparse(self._payload["attributes"]["updatedAt"])
         except (KeyError, TypeError):
@@ -84,7 +136,6 @@ class Anime:
 
     @property
     def title(self) -> Optional[str]:
-        """The anime's title."""
         value: Optional[str]
         for value in self._payload["attributes"]["titles"].values():
             if value:
@@ -97,10 +148,6 @@ class Anime:
     @property
     def abbreviated_titles(self) -> Optional[List[str]]:
         return self._payload["attributes"].get("abbreviatedTitles", None)
-
-    @property
-    async def genres(self) -> Optional[list]:
-        return await self._fetch_genres()
 
     @property
     def average_rating(self) -> Optional[float]:
@@ -136,7 +183,6 @@ class Anime:
 
     @property
     def end_date(self) -> Optional[datetime]:
-        """Returns the end date as a datetime object"""
         try:
             return datetime.strptime(self._payload["attributes"]["endDate"], "%Y-%m-%d")
         except (KeyError, TypeError):
@@ -199,7 +245,6 @@ class Anime:
 
     @property
     def episode_length(self) -> Optional[int]:
-        """length of each episode in minutes"""
         try:
             return int(self._payload["attributes"]["episodeLength"])
         except (KeyError, TypeError):
@@ -225,24 +270,32 @@ class Manga:
     def __str__(self) -> Optional[str]:
         return self.title
 
-    async def _fetch_genres(self) -> Optional[list]:
-        headers = {"Accept": "application/vnd.api+json", "Content-Type": "application/vnd.api+json", "User-Agent":  "Kitsu.py (https://github.com/MrArkon/kitsu.py)"}
-        async with self._session.get(url=f"https://kitsu.io/api/edge/manga/{self.id}/genres", headers=headers) as response:
+    async def _fetch_categories(self) -> Optional[List[Category]]:
+        headers = {
+            "Accept": "application/vnd.api+json",
+            "Content-Type": "application/vnd.api+json",
+            "User-Agent": "Kitsu.py (https://github.com/MrArkon/kitsu.py)",
+        }
+        async with self._session.get(
+            url=f"https://kitsu.io/api/edge/manga/{self.id}/categories", headers=headers
+        ) as response:
             if response.status == 200:
                 _raw_data = await response.json()
             else:
                 return None
 
-        return [data["attributes"]["name"] for data in _raw_data["data"]]
+        return [Category(data) for data in _raw_data["data"]]
+
+    @property
+    async def categories(self) -> Optional[List[Category]]:
+        return await self._fetch_categories()
 
     @property
     def id(self) -> str:
-        """The manga's ID."""
         return self._payload.get("id", None)
 
     @property
     def created_at(self) -> Optional[datetime]:
-        """creation datetime"""
         try:
             return isoparse(self._payload["attributes"]["createdAt"])
         except (KeyError, TypeError):
@@ -250,7 +303,6 @@ class Manga:
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """last modified datetime"""
         try:
             return isoparse(self._payload["attributes"]["updatedAt"])
         except (KeyError, TypeError):
@@ -266,7 +318,6 @@ class Manga:
 
     @property
     def title(self) -> Optional[str]:
-        """The manga's title."""
         value: Optional[str]
         for value in self._payload["attributes"]["titles"].values():
             if value:
@@ -279,10 +330,6 @@ class Manga:
     @property
     def abbreviated_titles(self) -> Optional[List[str]]:
         return self._payload["attributes"].get("abbreviatedTitles", None)
-
-    @property
-    async def genres(self) -> Optional[list]:
-        return await self._fetch_genres()
 
     @property
     def average_rating(self) -> Optional[float]:
