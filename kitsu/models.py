@@ -77,6 +77,35 @@ class Category:
         return self._data["attributes"].get("nsfw", None)
 
 
+class Title:
+    def __init__(self, data: dict) -> None:
+        self._data: dict = data
+
+    def __repr__(self) -> str:
+        value: Optional[str]
+        for value in self._data.values():
+            if value:
+                return value
+
+    def __str__(self) -> str:
+        return self.__repr__()
+
+    @property
+    def en(self) -> Optional[str]:
+        """The english name of the resource"""
+        return self._data.get("en", None)
+
+    @property
+    def en_jp(self) -> Optional[str]:
+        """The japanese name of the resource in english characters"""
+        return self._data.get("en_jp", None)
+
+    @property
+    def ja_jp(self) -> Optional[str]:
+        """The japanese name of the resource"""
+        return self._data.get("ja_jp", None)
+
+
 class Anime:
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         self._payload: dict = payload
@@ -135,11 +164,11 @@ class Anime:
         return self._payload["attributes"].get("synopsis", None)
 
     @property
-    def title(self) -> Optional[str]:
-        value: Optional[str]
-        for value in self._payload["attributes"]["titles"].values():
-            if value:
-                return value
+    def title(self) -> Optional[Title]:
+        try:
+            return Title(self._payload["attributes"]["titles"])
+        except (KeyError, TypeError):
+            return None
 
     @property
     def canonical_title(self) -> Optional[str]:
@@ -317,11 +346,11 @@ class Manga:
         return self._payload["attributes"].get("synopsis", None)
 
     @property
-    def title(self) -> Optional[str]:
-        value: Optional[str]
-        for value in self._payload["attributes"]["titles"].values():
-            if value:
-                return value
+    def title(self) -> Optional[Title]:
+        try:
+            return Title(self._payload["attributes"]["titles"])
+        except (KeyError, TypeError):
+            return None
 
     @property
     def canonical_title(self) -> Optional[str]:
