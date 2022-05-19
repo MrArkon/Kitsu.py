@@ -134,6 +134,68 @@ class StreamingLink:
             return None
 
 
+class Episode:
+    def __init__(self, data: dict) -> None:
+        self._data: dict = data
+
+    @property
+    def id(self) -> Optional[str]:
+        return self._data.get("id", None)
+
+    @property
+    def type(self) -> Optional[str]:
+        return self._data.get("type", None)
+
+    @property
+    def title(self) -> Optional[Title]:
+        try:
+            return Title(self._data["attributes"]["titles"])
+        except (KeyError, TypeError):
+            return None
+
+    @property
+    def canonical_title(self) -> Optional[str]:
+        return self._data["attributes"].get("canonicalTitle", None)
+
+    @property
+    def synopsis(self) -> Optional[str]:
+        return self._data["attributes"].get("synopsis", None)
+
+    @property
+    def season_number(self) -> Optional[str]:
+        return self._data["attributes"].get("seasonNumber", None)
+
+    @property
+    def episode_number(self) -> Optional[str]:
+        return self._data["attributes"].get("number", None)
+
+    @property
+    def air_date(self) -> Optional[str]:
+        return self._data["attributes"].get("airdate", None)
+
+    @property
+    def created_at(self) -> Optional[datetime]:
+        try:
+            return isoparse(self._data["attributes"]["createdAt"])
+        except (KeyError, TypeError):
+            return None
+
+    @property
+    def updated_at(self) -> Optional[datetime]:
+        try:
+            return isoparse(self._data["attributes"]["updatedAt"])
+        except (KeyError, TypeError):
+            return None
+
+    def thumbnail(
+        self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
+    ) -> Optional[str]:
+        try:
+            return self._data["attributes"]["thumbnail"].get(_type, None)
+        except AttributeError:
+            return None
+
+
 class Title:
     def __init__(self, data: dict) -> None:
         self._data: dict = data
@@ -332,9 +394,24 @@ class Anime(Media):
 
         return [StreamingLink(data) for data in _raw_data["data"]]
 
+    async def _fetch_episodes(self) -> Optional[List[Episode]]:
+        async with self._session.get(
+            url=f"https://kitsu.io/api/edge/anime/{self.id}/episodes", headers=HEADERS
+        ) as response:
+            if response.status == 200:
+                _raw_data = await response.json()
+            else:
+                return None
+
+        return [Episode(data) for data in _raw_data["data"]]
+
     @property
     async def streaming_links(self) -> Optional[List[StreamingLink]]:
         return await self._fetch_streaming_links()
+
+    @property
+    async def episodes(self) -> Optional[List[Episode]]:
+        return await self._fetch_episodes()
 
     @property
     def subtype(self) -> Optional[Literal["ONA", "OVA", "TV", "movie", "music", "special"]]:
