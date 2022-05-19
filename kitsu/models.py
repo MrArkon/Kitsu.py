@@ -25,11 +25,18 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import Dict, List, Literal, Optional
+from urllib.parse import urlparse
 
 import aiohttp
 from dateutil.parser import isoparse
 
 __all__ = ("Anime", "Manga")
+
+HEADERS: dict = {
+    "Accept": "application/vnd.api+json",
+    "Content-Type": "application/vnd.api+json",
+    "User-Agent": "Kitsu.py (https://github.com/MrArkon/kitsu.py)",
+}
 
 
 class Category:
@@ -77,6 +84,56 @@ class Category:
         return self._data["attributes"].get("nsfw", None)
 
 
+class StreamingLink:
+    def __init__(self, data: dict) -> None:
+        self._data: dict = data
+
+    @property
+    def id(self) -> Optional[str]:
+        return self._data.get("id", None)
+
+    @property
+    def title(self) -> Optional[str]:
+        try:
+            _parsed_url = urlparse(self.url).hostname.split(".")
+            if _parsed_url[0] not in ["www", "beta"]:
+                return _parsed_url[0].capitalize()
+            else:
+                return _parsed_url[1].capitalize()
+        except:
+            return None
+
+    @property
+    def url(self) -> Optional[str]:
+        _url: str = self._data["attributes"]["url"]
+        if _url.startswith(("http://", "https://")):
+            return _url
+        else:
+            return "https://" + _url
+
+    @property
+    def subs(self) -> Optional[list]:
+        return self._data["attributes"].get("subs", None)
+
+    @property
+    def dubs(self) -> Optional[list]:
+        return self._data["attributes"].get("dubs", None)
+
+    @property
+    def created_at(self) -> Optional[datetime]:
+        try:
+            return isoparse(self._data["attributes"]["createdAt"])
+        except (KeyError, TypeError):
+            return None
+
+    @property
+    def updated_at(self) -> Optional[datetime]:
+        try:
+            return isoparse(self._data["attributes"]["updatedAt"])
+        except (KeyError, TypeError):
+            return None
+
+
 class Title:
     def __init__(self, data: dict) -> None:
         self._data: dict = data
@@ -118,13 +175,8 @@ class Anime:
         return self.title
 
     async def _fetch_categories(self) -> Optional[List[Category]]:
-        headers = {
-            "Accept": "application/vnd.api+json",
-            "Content-Type": "application/vnd.api+json",
-            "User-Agent": "Kitsu.py (https://github.com/MrArkon/kitsu.py)",
-        }
         async with self._session.get(
-            url=f"https://kitsu.io/api/edge/anime/{self.id}/categories", headers=headers
+            url=f"https://kitsu.io/api/edge/anime/{self.id}/categories", headers=HEADERS
         ) as response:
             if response.status == 200:
                 _raw_data = await response.json()
@@ -133,9 +185,24 @@ class Anime:
 
         return [Category(data) for data in _raw_data["data"]]
 
+    async def _fetch_streaming_links(self) -> Optional[List[StreamingLink]]:
+        async with self._session.get(
+            url=f"https://kitsu.io/api/edge/anime/{self.id}/streaming-links", headers=HEADERS
+        ) as response:
+            if response.status == 200:
+                _raw_data = await response.json()
+            else:
+                return None
+
+        return [StreamingLink(data) for data in _raw_data["data"]]
+
     @property
     async def categories(self) -> Optional[List[Category]]:
         return await self._fetch_categories()
+
+    @property
+    async def streaming_links(self) -> Optional[List[StreamingLink]]:
+        return await self._fetch_streaming_links()
 
     @property
     def id(self) -> Optional[str]:
@@ -300,13 +367,8 @@ class Manga:
         return self.title
 
     async def _fetch_categories(self) -> Optional[List[Category]]:
-        headers = {
-            "Accept": "application/vnd.api+json",
-            "Content-Type": "application/vnd.api+json",
-            "User-Agent": "Kitsu.py (https://github.com/MrArkon/kitsu.py)",
-        }
         async with self._session.get(
-            url=f"https://kitsu.io/api/edge/manga/{self.id}/categories", headers=headers
+            url=f"https://kitsu.io/api/edge/manga/{self.id}/categories", headers=HEADERS
         ) as response:
             if response.status == 200:
                 _raw_data = await response.json()
