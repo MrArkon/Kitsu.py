@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added `trending_manga` function
 - Added `Categories` (Replaced Genres) to Anime & Manga
+- Added `streaming_links` to Anime
 
 ## Changed
 - Changed the title property in `Anime` & `Manga`
