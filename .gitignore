@@ -1,6 +1,5 @@
 # Python Files & Folders
 env/
-docs/
 dist/
 tests/
 __pycache__/
@@ -8,3 +7,8 @@ __pycache__/
 # Tools Files & Folders
 .vscode/
 poetry.lock
+
+# Documentation Files & Folders
+docs/build
+docs/_build
+docs/_static
