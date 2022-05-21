@@ -34,8 +34,17 @@ python-dateutil = "^2.8.2"
 "Changelog" = "https://github.com/MrArkon/kitsu.py/blob/master/CHANGELOG.md"
 
 [tool.poetry.dev-dependencies]
+# Formatting Tools
 black = "^21.6b0"
 isort = "^5.9.3"
+
+# Documentation
+Sphinx = "^4.5.0"
+furo = "^2022.4.7"
+tomli = "^2.0.1"
+myst-parser = "^0.17.2"
+sphinx-inline-tabs = "^2022.1.2-beta.11"
+sphinx-copybutton = "^0.5.0"
 
 [tool.black]
 line-length = 125
