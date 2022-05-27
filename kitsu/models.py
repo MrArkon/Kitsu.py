@@ -516,14 +516,35 @@ class Anime(Media):
 
     @property
     async def streaming_links(self) -> Optional[List[StreamingLink]]:
+        """
+        The streaming links & information for the Anime
+        
+        Returns
+        -------
+        Optional[List[:class:`StreamingLink`]]
+        """
         return await self._fetch_streaming_links()
 
     @property
     async def episodes(self) -> Optional[List[Episode]]:
+        """
+        The episodes of the Anime
+        
+        Returns
+        -------
+        Optional[List[:class:`Episode`]]
+        """
         return await self._fetch_episodes()
 
     @property
     def episode_count(self) -> Optional[int]:
+        """
+        The number of episodes of this Anime
+        
+        Returns
+        -------
+        Optional[int]
+        """
         try:
             return int(self._data["attributes"]["episodeCount"])
         except (KeyError, TypeError):
@@ -531,6 +552,13 @@ class Anime(Media):
 
     @property
     def episode_length(self) -> Optional[int]:
+        """
+        The avg length of episodes of this Anime in minutes
+        
+        Returns
+        -------
+        Optional[int]
+        """
         try:
             return int(self._data["attributes"]["episodeLength"])
         except (KeyError, TypeError):
@@ -561,6 +589,9 @@ class Manga(Media):
         Elaborated age rating for the Manga
     status: Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]]
         The status of the Manga
+    subtype: Optional[Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]]
+        The subtype of the Manga
+    serialization: Optional[str]
     """
     
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
@@ -571,6 +602,13 @@ class Manga(Media):
 
     @property
     def chapter_count(self) -> Optional[int]:
+        """
+        The number of chapters in this Manga
+        
+        Returns
+        -------
+        Optional[int]
+        """
         try:
             return int(self._data["attributes"]["chapterCount"])
         except (KeyError, TypeError):
@@ -578,6 +616,13 @@ class Manga(Media):
 
     @property
     def volume_count(self) -> Optional[int]:
+        """
+        The number of volumes of this Manga
+        
+        Returns
+        -------
+        Optional[int]
+        """
         try:
             return int(self._data["attributes"]["volumeCount"])
         except (KeyError, TypeError):
