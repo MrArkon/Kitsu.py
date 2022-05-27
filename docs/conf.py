@@ -46,7 +46,6 @@ extensions = [
     # External Extensions
     "myst_parser",
     "sphinx_inline_tabs",
-    "sphinx_copybutton"
 ]
 autodoc_member_order = 'bysource'
 

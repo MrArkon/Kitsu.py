@@ -7,7 +7,7 @@
         <img src="https://img.shields.io/pypi/l/kitsu.py?style=for-the-badge" />
     </a>
     <a>
-    <a href="https://www.codacy.com/gh/MrArkon/kitsu.py/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrArkon/kitsu.py&amp;utm_campaign=Badge_Grade">
+    <a href="https://www.codacy.com/gh/MrArkon/Kitsu.py/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrArkon/Kitsu.py&amp;utm_campaign=Badge_Grade">
         <img src="https://img.shields.io/codacy/grade/a04e4a4edbb84f6ea6d0c5a091a912a5?style=for-the-badge" />
     </a>
     <br> kitsu.py is an asynchronous API wrapper for Kitsu written in Python.

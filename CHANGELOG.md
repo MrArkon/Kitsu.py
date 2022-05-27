@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `categories` (Replaced Genres) to Anime & Manga
 - Added `streaming_links` to Anime
 - Added `episodes` to Anime
+- Added [Documentation](https://kitsu-py.readthedocs.io/)
 
 ## Changed
 - Changed the title property in `Anime` & `Manga`
