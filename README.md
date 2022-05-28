@@ -1,22 +1,57 @@
 <h1 align="center">Kitsu.py</h1>
-<p align="center">
-    <a href="https://pypi.python.org/pypi/kitsu.py">
-        <img src="https://img.shields.io/pypi/v/kitsu.py.svg?style=for-the-badge&color=orange&logo=&logoColor=white" />
-    </a>
-    <a href="https://github.com/MrArkon/kitsu.py/blob/master/LICENSE">
-        <img src="https://img.shields.io/pypi/l/kitsu.py?style=for-the-badge" />
-    </a>
-    <a>
-    <a href="https://www.codacy.com/gh/MrArkon/Kitsu.py/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrArkon/Kitsu.py&amp;utm_campaign=Badge_Grade">
-        <img src="https://img.shields.io/codacy/grade/a04e4a4edbb84f6ea6d0c5a091a912a5?style=for-the-badge" />
-    </a>
-    <br> kitsu.py is an asynchronous API wrapper for Kitsu written in Python.
-</p>
 
-## Key Features
-* Simple and modern Pythonic API using `async/await`
-* Fully typed
-* Filter & Limit functionality
+<div align="center">
+  <strong>Python API wrapper for kitsu.io</strong>
+</div>
+<div align="center">
+  A Simple & Lightweight Asynchronous Python Wrapper for Kitsu’s Manga & Anime API.
+</div>
+
+<br />
+
+
+<div align="center">
+  <!-- License -->
+  <a href="https://github.com/MrArkon/kitsu.py/blob/master/LICENSE">
+    <img src="https://img.shields.io/pypi/l/kitsu.py?label=License&style=flat-square"
+      alt="License" />
+  </a>
+  <!-- Code Quality -->
+  <a href="https://www.codacy.com/gh/MrArkon/Kitsu.py/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=MrArkon/Kitsu.py&amp;utm_campaign=Badge_Grad">
+    <img src="https://img.shields.io/codacy/grade/a04e4a4edbb84f6ea6d0c5a091a912a5?label=Code%20Quality&style=flat-square" />
+  </a>
+  <!-- Downloads -->
+   <img src="https://img.shields.io/pypi/dm/Kitsu.py?label=Downloads&style=flat-square" />
+  <!-- PyPi Version -->
+  <a href="https://pypi.python.org/pypi/kitsu.py">
+      <img src="https://img.shields.io/pypi/v/Kitsu.py?label=PyPi&style=flat-square" />
+  </a>
+  <!-- PyPi Version -->
+  <img src="https://img.shields.io/pypi/pyversions/Kitsu.py?label=Python&style=flat-square" />
+</div>
+
+<div align="center">
+  <h3>
+    <a href="https://kitsu-py.readthedocs.io/">
+      Documentation
+    </a>
+    <span> | </span>
+    <a href="https://pypi.org/project/Kitsu.py/">
+      Project Page
+    </a>
+    <span> | </span>
+    <a href="https://github.com/MrArkon/Kitsu.py/blob/master/CHANGELOG.md">
+        Changelog
+    </a>
+  </h3>
+</div>
+
+
+## Features
+* **Simple and Modern** — Simple and Modern Pythonic API using `async/await`.
+* **Typed** — Fully typed to provide a smooth experience while programming.
+* **Features** — Get information about Categories, Episodes, Streaming Links and a lot more!
+* **Custom Search** — Find any Anime/Manga using Filters or Trending Animes & Mangas.
 
 ## Requirements
 
@@ -34,7 +69,7 @@ python3 -m pip install -U kitsu.py
 py -3 -m pip install -U kitsu.py
 ```
 
-## Usage
+## Example
 
 Search for an anime:
 ```python
@@ -68,9 +103,6 @@ Average Rating: 85.98
 That Time I Got Reincarnated as a Slime: Ramiris to the Rescue, Blue Thermal, Q&A=E, Smol Adventures, Estab-Life: Great Escape
 ```
 You can find more examples in the [examples](https://github.com/MrArkon/kitsu.py/tree/master/examples/) directory.
-    
-## Contributors
-* [Dymattic](https://github.com/dymattic)
 
 ## License
 
