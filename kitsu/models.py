@@ -89,11 +89,11 @@ class StreamingLink:
         self._data: dict = data
 
     @property
-    def id(self) -> Optional[str]:
+    def id(self) -> str:
         return self._data.get("id", None)
 
     @property
-    def title(self) -> Optional[str]:
+    def title(self) -> str:
         try:
             _parsed_url = urlparse(self.url).hostname.split(".")
             if _parsed_url[0] not in ["www", "beta"]:
@@ -104,7 +104,7 @@ class StreamingLink:
             return None
 
     @property
-    def url(self) -> Optional[str]:
+    def url(self) -> str:
         _url: str = self._data["attributes"]["url"]
         if _url.startswith(("http://", "https://")):
             return _url
@@ -121,6 +121,13 @@ class StreamingLink:
 
     @property
     def created_at(self) -> Optional[datetime]:
+        """
+        The time when this link was added on Kitsu
+
+        Returns
+        -------
+        Optional[datetime]
+        """
         try:
             return isoparse(self._data["attributes"]["createdAt"])
         except (KeyError, TypeError):
@@ -128,6 +135,13 @@ class StreamingLink:
 
     @property
     def updated_at(self) -> Optional[datetime]:
+        """
+        The last time this streaming link was updated on Kitsu.
+
+        Returns
+        -------
+        Optional[datetime]
+        """
         try:
             return isoparse(self._data["attributes"]["updatedAt"])
         except (KeyError, TypeError):
@@ -135,16 +149,35 @@ class StreamingLink:
 
 
 class Episode:
+    """
+    Represents an episode of an Anime
+
+    Attributes
+    ----------
+    id: str
+        The UUID of the Episode on kitsu
+    canonical_title: str
+        The canonical title of the episode
+    synopsis: str
+        The synopsis/description of the episode
+    season_number: str
+        The season number this episode belongs to
+    episode_number: str
+        The number of the episode
+    air_date: str
+        The date on which this episode was aired
+    """
+
     def __init__(self, data: dict) -> None:
         self._data: dict = data
 
-    @property
-    def id(self) -> Optional[str]:
-        return self._data.get("id", None)
-
-    @property
-    def type(self) -> Optional[str]:
-        return self._data.get("type", None)
+        self.id: str = self._data["id"]
+        self.type: str = self._data["type"]
+        self.canonical_title: str = self._data["attributes"]["canonicalTitle"]
+        self.synopsis: str = self._data["attributes"]["synopsis"]
+        self.season_number: str = self._data["attributes"]["seasonNumber"]
+        self.episode_number: str = self._data["attributes"]["number"]
+        self.air_date: str = self._data["attributes"]["airdate"]
 
     @property
     def title(self) -> Optional[Title]:
@@ -152,26 +185,6 @@ class Episode:
             return Title(self._data["attributes"]["titles"])
         except (KeyError, TypeError):
             return None
-
-    @property
-    def canonical_title(self) -> Optional[str]:
-        return self._data["attributes"].get("canonicalTitle", None)
-
-    @property
-    def synopsis(self) -> Optional[str]:
-        return self._data["attributes"].get("synopsis", None)
-
-    @property
-    def season_number(self) -> Optional[str]:
-        return self._data["attributes"].get("seasonNumber", None)
-
-    @property
-    def episode_number(self) -> Optional[str]:
-        return self._data["attributes"].get("number", None)
-
-    @property
-    def air_date(self) -> Optional[str]:
-        return self._data["attributes"].get("airdate", None)
 
     @property
     def created_at(self) -> Optional[datetime]:
@@ -211,17 +224,32 @@ class Title:
 
     @property
     def en(self) -> Optional[str]:
-        """The english name of the resource"""
+        """
+        The title in english
+        Returns
+        -------
+        Optional[str]
+        """
         return self._data.get("en", None)
 
     @property
     def en_jp(self) -> Optional[str]:
-        """The japanese name of the resource in english characters"""
+        """
+        The japanese title in english characters
+        Returns
+        -------
+        Optional[str]
+        """
         return self._data.get("en_jp", None)
 
     @property
     def ja_jp(self) -> Optional[str]:
-        """The japanese name of the resource"""
+        """
+        The title in japanese
+        Returns
+        -------
+        Optional[str]
+        """
         return self._data.get("ja_jp", None)
 
 
@@ -241,7 +269,9 @@ class Media:
         self.rating_frequencies: Optional[Dict[str, str]] = self._data["attributes"]["ratingFrequencies"]
         self.age_rating: Optional[Literal["G", "PG", "R", "R18"]] = self._data["attributes"]["ageRating"]
         self.age_rating_guide: Optional[str] = self._data["attributes"]["ageRatingGuide"]
-        self.status: Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]] = self._data["attributes"]["status"]
+        self.status: Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]] = self._data["attributes"][
+            "status"
+        ]
         self.tba: Optional[str] = self._data["attributes"].get("tba")
 
     def __repr__(self) -> str:
@@ -265,7 +295,7 @@ class Media:
     def title(self) -> Optional[Title]:
         """
         The titles of the Anime/Manga in different languages. Other languages will be listed if they exist.
-        
+
         Returns
         -------
         Optional[:class:`Title`]
@@ -279,7 +309,7 @@ class Media:
     async def categories(self) -> Optional[List[Category]]:
         """
         The categories or genres of the Anime/Manga
-        
+
         Returns
         -------
         Optional[List[:class:`Title`]]
@@ -290,7 +320,7 @@ class Media:
     def created_at(self) -> Optional[datetime]:
         """
         When the Anime/Manga was added on Kitsu. (Use start_date instead)
-        
+
         Returns
         -------
         Optional[datetime]
@@ -304,7 +334,7 @@ class Media:
     def updated_at(self) -> Optional[datetime]:
         """
         The last time Anime/Manga was updated on Kitsu.
-        
+
         Returns
         -------
         Optional[datetime]
@@ -318,7 +348,7 @@ class Media:
     def average_rating(self) -> Optional[float]:
         """
         The average rating of the Anime/Manga on Kitsu
-        
+
         Returns
         -------
         Optional[float]
@@ -332,7 +362,7 @@ class Media:
     def user_count(self) -> Optional[int]:
         """
         The user count of the Anime/Manga on Kitsu
-        
+
         Returns
         -------
         Optional[int]
@@ -346,7 +376,7 @@ class Media:
     def favorites_count(self) -> Optional[int]:
         """
         The favorites count of the Anime/Manga on Kitsu
-        
+
         Returns
         -------
         Optional[int]
@@ -360,7 +390,7 @@ class Media:
     def start_date(self) -> Optional[datetime]:
         """
         The date on which the Anime/Manga started
-        
+
         Returns
         -------
         Optional[datetime]
@@ -374,7 +404,7 @@ class Media:
     def end_date(self) -> Optional[datetime]:
         """
         The date on which the Anime/Manga ended.
-        
+
         Returns
         -------
         Optional[datetime]
@@ -388,7 +418,7 @@ class Media:
     def popularity_rank(self) -> Optional[int]:
         """
         The popularity rank of the Anime/Manga on Kitsu
-        
+
         Returns
         -------
         Optional[int]
@@ -402,7 +432,7 @@ class Media:
     def rating_rank(self) -> Optional[int]:
         """
         The rating rank of the Anime/Manga on Kitsu
-        
+
         Returns
         -------
         Optional[int]
@@ -417,12 +447,12 @@ class Media:
     ) -> Optional[str]:
         """
         The poster image of the Anime/Manga
-        
+
         Parameters
         ----------
         _type: Optional[Literal["tiny", "small", "medium", "large", "original"]], default: "original"
             The size in which the image should be returned. The size will be orginal by default
-        
+
         Returns
         -------
         Optional[str]
@@ -436,12 +466,12 @@ class Media:
     def cover_image(self, _type: Optional[Literal["tiny", "small", "large", "original"]] = "original") -> Optional[str]:
         """
         The cover image of the Anime/Manga
-        
+
         Parameters
         ----------
         _type: Optional[Literal["tiny", "small", "medium", "large", "original"]], default: "original"
             The size in which the image should be returned. The size will be orginal by default
-        
+
         Returns
         -------
         Optional[str]
@@ -456,18 +486,18 @@ class Media:
 class Anime(Media):
     """
     The information about an Anime wrapped in a class
-    
+
     Attributes
     ----------
     id: str
         The UUID of the Anime on Kitsu
     slug: str
-        The name of the Anime with hyphens, It's recommended to use title or canoncial_title instead. 
+        The name of the Anime with hyphens, It's recommended to use title or canoncial_title instead.
         Example: `cowboy-bebop`
     canonical_title: str
         The canonical title of the Anime
     synopsis: str
-        The Synopsis/Description of the Anime
+        The synopsis/description of the Anime
     abbreviated_titles: Optional[List[str]]
         A list of abbreivated titles for the Anime
     rating_frequencies: Optional[Dict[str, str]]
@@ -490,7 +520,9 @@ class Anime(Media):
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         super().__init__(payload, session)
 
-        self.subtype: Optional[Literal["ONA", "OVA", "TV", "movie", "music", "special"]] = self._data["attributes"]["subtype"]
+        self.subtype: Optional[Literal["ONA", "OVA", "TV", "movie", "music", "special"]] = self._data["attributes"][
+            "subtype"
+        ]
         self.youtube_video_id: Optional[str] = self._data["attributes"]["youtubeVideoId"]
         self.nsfw: Optional[bool] = self._data["attributes"]["nsfw"]
 
@@ -518,7 +550,7 @@ class Anime(Media):
     async def streaming_links(self) -> Optional[List[StreamingLink]]:
         """
         The streaming links & information for the Anime
-        
+
         Returns
         -------
         Optional[List[:class:`StreamingLink`]]
@@ -529,7 +561,7 @@ class Anime(Media):
     async def episodes(self) -> Optional[List[Episode]]:
         """
         The episodes of the Anime
-        
+
         Returns
         -------
         Optional[List[:class:`Episode`]]
@@ -540,7 +572,7 @@ class Anime(Media):
     def episode_count(self) -> Optional[int]:
         """
         The number of episodes of this Anime
-        
+
         Returns
         -------
         Optional[int]
@@ -554,7 +586,7 @@ class Anime(Media):
     def episode_length(self) -> Optional[int]:
         """
         The avg length of episodes of this Anime in minutes
-        
+
         Returns
         -------
         Optional[int]
@@ -573,7 +605,7 @@ class Manga(Media):
     id: str
         The UUID of the Manga on Kitsu
     slug: str
-        The name of the Manga with hyphens, It's recommended to use title or canoncial_title instead. 
+        The name of the Manga with hyphens, It's recommended to use title or canoncial_title instead.
         Example: `shingeki-no-kyojin`
     canonical_title: str
         The canonical title of the Manga
@@ -593,18 +625,20 @@ class Manga(Media):
         The subtype of the Manga
     serialization: Optional[str]
     """
-    
+
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         super().__init__(payload, session)
 
-        self.subtype: Optional[Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]] = self._data["attributes"]["subtype"]
+        self.subtype: Optional[Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]] = self._data[
+            "attributes"
+        ]["subtype"]
         self.serialization: Optional[str] = self._data["attributes"]["serialization"]
 
     @property
     def chapter_count(self) -> Optional[int]:
         """
         The number of chapters in this Manga
-        
+
         Returns
         -------
         Optional[int]
@@ -618,7 +652,7 @@ class Manga(Media):
     def volume_count(self) -> Optional[int]:
         """
         The number of volumes of this Manga
-        
+
         Returns
         -------
         Optional[int]
