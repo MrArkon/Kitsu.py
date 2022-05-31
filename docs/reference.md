@@ -34,3 +34,17 @@ API Models are simply the raw JSON data wrapped in a class with attributes, prop
    :members:
    :undoc-members:
 ```
+
+### Episode
+```{eval-rst}
+.. autoclass:: kitsu.models.Episode()
+   :members:
+   :undoc-members:
+```
+
+### Title
+```{eval-rst}
+.. autoclass:: kitsu.models.Title()
+   :members:
+   :undoc-members:
+```
