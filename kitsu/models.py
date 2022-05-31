@@ -181,6 +181,13 @@ class Episode:
 
     @property
     def title(self) -> Optional[Title]:
+        """
+        The titles of the episode in different languages. Other languages will be listed if they exist.
+
+        Returns
+        -------
+        Optional[:class:`Title`]
+        """
         try:
             return Title(self._data["attributes"]["titles"])
         except (KeyError, TypeError):
@@ -188,6 +195,13 @@ class Episode:
 
     @property
     def created_at(self) -> Optional[datetime]:
+        """
+        When this episode was added on Kitsu
+
+        Returns
+        -------
+        Optional[datetime]
+        """
         try:
             return isoparse(self._data["attributes"]["createdAt"])
         except (KeyError, TypeError):
@@ -195,6 +209,13 @@ class Episode:
 
     @property
     def updated_at(self) -> Optional[datetime]:
+        """
+        The last time this episode was updated on Kitsu
+
+        Returns
+        -------
+        Optional[datetime]
+        """
         try:
             return isoparse(self._data["attributes"]["updatedAt"])
         except (KeyError, TypeError):
@@ -203,6 +224,13 @@ class Episode:
     def thumbnail(
         self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
     ) -> Optional[str]:
+        """
+        The url to the thumbnail of this episode
+        
+        Returns
+        -------
+        Optional[str]
+        """
         try:
             return self._data["attributes"]["thumbnail"].get(_type, None)
         except AttributeError:
