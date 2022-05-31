@@ -226,6 +226,7 @@ class Title:
     def en(self) -> Optional[str]:
         """
         The title in english
+
         Returns
         -------
         Optional[str]
@@ -236,6 +237,7 @@ class Title:
     def en_jp(self) -> Optional[str]:
         """
         The japanese title in english characters
+
         Returns
         -------
         Optional[str]
@@ -246,6 +248,7 @@ class Title:
     def ja_jp(self) -> Optional[str]:
         """
         The title in japanese
+
         Returns
         -------
         Optional[str]
