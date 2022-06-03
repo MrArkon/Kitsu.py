@@ -40,25 +40,47 @@ HEADERS: dict = {
 
 
 class Category:
+    """
+    Represents a category of an Anime/Manga
+
+    Attributes
+    ----------
+    id: str
+        The UUID of the category on kitsu
+    title: str
+        The title of the category
+    description: str
+        The description of the category
+    total_media_count: str
+        The total media count of the category
+    nsfw: bool
+        If the category is NSFW(Not safe for work/18+)
+    """
+
     def __init__(self, data: dict) -> None:
         self._data: dict = data
+
+        self.id: str = self._data["id"]
+        self.title: str = self._data["title"]
+        self.description: str = self._data["attributes"]["description"]
+        self.total_media_count: str = self._data["attributes"]["totalMediaCount"]
+        self.nsfw: bool = self._data["attributes"]["nsfw"]
 
     def __repr__(self) -> str:
         return f"<Category id={self.id} title='{self.title}'>"
 
-    def __str__(self) -> Optional[str]:
+    def __str__(self) -> str:
         return self.title
 
     @property
-    def id(self) -> Optional[str]:
-        return self._data.get("id", None)
-
-    @property
-    def title(self) -> Optional[str]:
-        return self._data["attributes"].get("title", None)
-
-    @property
     def created_at(self) -> Optional[datetime]:
+        """
+        The time when this category was added on Kitsu
+
+        Returns
+        -------
+        Optional[datetime]
+        """
         try:
             return isoparse(self._data["attributes"]["createdAt"])
         except (KeyError, TypeError):
@@ -66,34 +88,49 @@ class Category:
 
     @property
     def updated_at(self) -> Optional[datetime]:
+        """
+        The last time this category was updated on Kitsu
+
+        Returns
+        -------
+        Optional[datetime]
+        """
         try:
             return isoparse(self._data["attributes"]["updatedAt"])
         except (KeyError, TypeError):
             return None
 
-    @property
-    def description(self) -> Optional[str]:
-        return self._data["attributes"].get("description", None)
-
-    @property
-    def total_media_count(self) -> Optional[str]:
-        return self._data["attributes"].get("totalMediaCount", None)
-
-    @property
-    def nsfw(self) -> Optional[bool]:
-        return self._data["attributes"].get("nsfw", None)
-
 
 class StreamingLink:
+    """
+    Represents the streaming link for an Anime
+
+    Attributes
+    ----------
+    id: str
+        The UUID of the streaming link on kitsu
+    subs: list
+        The subs available on this streaming link
+    dubs: list
+        The dubs available on this streaming link
+    """
+
     def __init__(self, data: dict) -> None:
         self._data: dict = data
 
-    @property
-    def id(self) -> str:
-        return self._data.get("id", None)
+        self.id: str = self._data["id"]
+        self.subs: List[str] = self._data["attributes"]["subs"]
+        self.dubs: List[str] = self._data["attributes"]["dubs"]
 
     @property
     def title(self) -> str:
+        """
+        The title of the streaming link
+
+        Returns
+        -------
+        str
+        """
         try:
             _parsed_url = urlparse(self.url).hostname.split(".")
             if _parsed_url[0] not in ["www", "beta"]:
@@ -105,19 +142,18 @@ class StreamingLink:
 
     @property
     def url(self) -> str:
+        """
+        The url to the streaming link
+
+        Returns
+        -------
+        str
+        """
         _url: str = self._data["attributes"]["url"]
         if _url.startswith(("http://", "https://")):
             return _url
         else:
             return "https://" + _url
-
-    @property
-    def subs(self) -> Optional[list]:
-        return self._data["attributes"].get("subs", None)
-
-    @property
-    def dubs(self) -> Optional[list]:
-        return self._data["attributes"].get("dubs", None)
 
     @property
     def created_at(self) -> Optional[datetime]:
@@ -226,7 +262,7 @@ class Episode:
     ) -> Optional[str]:
         """
         The url to the thumbnail of this episode
-        
+
         Returns
         -------
         Optional[str]
