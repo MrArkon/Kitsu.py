@@ -123,16 +123,16 @@ class StreamingLink:
         self.dubs: List[str] = self._data["attributes"]["dubs"]
 
     @property
-    def title(self) -> str:
+    def title(self) -> Optional[str]:
         """
         The title of the streaming link
 
         Returns
         -------
-        str
+        Optional[str]
         """
         try:
-            _parsed_url = urlparse(self.url).hostname.split(".")
+            _parsed_url = urlparse(self.url).hostname.split(".") # type: ignore
             if _parsed_url[0] not in ["www", "beta"]:
                 return _parsed_url[0].capitalize()
             else:
@@ -277,13 +277,13 @@ class Title:
     def __init__(self, data: dict) -> None:
         self._data: dict = data
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> Optional[str]:
         value: Optional[str]
         for value in self._data.values():
             if value:
                 return value
 
-    def __str__(self) -> str:
+    def __str__(self) -> Optional[str]:
         return self.__repr__()
 
     @property
@@ -344,8 +344,8 @@ class Media:
     def __repr__(self) -> str:
         return f"<{self.type.capitalize()} id={self.id} title='{self.title}'>"
 
-    def __str__(self) -> Optional[str]:
-        return self.title
+    def __str__(self) -> str:
+        return str(self.title)
 
     async def _fetch_categories(self) -> Optional[List[Category]]:
         async with self._session.get(
