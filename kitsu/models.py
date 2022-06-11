@@ -61,7 +61,7 @@ class Category:
         self._data: dict = data
 
         self.id: str = self._data["id"]
-        self.title: str = self._data["title"]
+        self.title: str = self._data["attributes"]["title"]
         self.description: str = self._data["attributes"]["description"]
         self.total_media_count: str = self._data["attributes"]["totalMediaCount"]
         self.nsfw: bool = self._data["attributes"]["nsfw"]
