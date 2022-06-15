@@ -29,7 +29,7 @@ from typing import Any, List, Optional, Union
 import aiohttp
 
 from .errors import BadRequest, HTTPException, NotFound
-from .models import Anime, Manga
+from .models import Anime, Character, Manga
 
 __all__ = ("Client",)
 __log__: logging.Logger = logging.getLogger(__name__)
@@ -230,6 +230,71 @@ class Client:
             return Manga(data["data"][0], self._session)
         else:
             return [Manga(payload, self._session) for payload in data["data"]]
+
+    async def get_character(self, character_id: int, *, raw: bool = False) -> Union[Character, dict]:
+        """
+        Fetch the information of a character using its ID
+
+        Parameters
+        ----------
+        character_id: int
+            The ID of the manga
+        raw: bool, default: False
+            Whether to return the information in a dict
+
+        Returns
+        -------
+        Union[:class:`Character`, :class:`dict`]
+            An :class:`Character` instance, If the raw parameter is True it will return the raw json information by the API
+        """
+        data = await self._get(url=f"{BASE}/characters/{character_id}")
+
+        if raw:
+            return data["data"]
+
+        return Character(data["data"], self._session)
+
+    async def search_character(
+        self, query: str = "", limit: int = 1, *, raw: bool = False, **filters
+    ) -> Optional[Union[Character, List[Character], dict]]:
+        """
+        Search for a character with its Name or Filters
+
+        Parameters
+        ----------
+        query: str, default: ""
+            The query you want to search with
+        limit: int, default: 1
+            Limits the number of character returned
+        raw: bool, default: False
+            Whether to return the information in a dict
+        **filters: dict, optional
+            The possible filters are: name, slug
+
+        Returns
+        -------
+        Optional[Union[Character, List[Character], dict]]
+            A :class:`Character` instance if only one result is found or the limit is 1, Multiple :class:`Character` instances otherwise.
+            If the raw parameter is True it will return the raw json information by the API.
+        """        
+        params = {"page[limit]": str(limit)}
+
+        if query != "":
+            params["filter[name]"] = query
+
+        await self._insert_filters(filters, params)
+
+        data = await self._get(url=f"{BASE}/characters", params=params)
+
+        if raw:
+            return data
+
+        if not data["data"]:
+            return None
+        elif len(data["data"]) == 1:
+            return Character(data["data"][0], self._session)
+        else:
+            return [Character(payload, self._session) for payload in data["data"]]
 
     async def trending_manga(self, *, raw: bool = False) -> Optional[Union[List[Manga], dict]]:
         """

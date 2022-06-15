@@ -273,6 +273,41 @@ class Episode:
             return None
 
 
+class Name:
+    def __init__(self, data: dict) -> None:
+        self._data: dict = data
+    
+    def __repr__(self) -> Optional[str]:
+        value: Optional[str]
+        for value in self._data.values():
+            if value:
+                return value
+    
+    def __str__(self) -> Optional[str]:
+        return self.__repr__()
+
+    @property
+    def en(self) -> Optional[str]:
+        """
+        Name of a character in english
+
+        Returns
+        -------
+        Optional[str]
+        """
+        return self._data.get("en", None)
+
+    @property
+    def ja_jp(self) -> Optional[str]:
+        """
+        Name of a character in japanese
+
+        Returns
+        -------
+        Optional[str]
+        """
+        return self._data.get("ja_jp", None)
+
 class Title:
     def __init__(self, data: dict) -> None:
         self._data: dict = data
@@ -319,6 +354,98 @@ class Title:
         """
         return self._data.get("ja_jp", None)
 
+class Character:
+    """
+    The information about a Character wrapped in a class
+
+    Attributes
+    ----------
+    id: str
+        The UUID of the Anime on Kitsu
+    slug: str
+        The name of the character with hyphens, It's recommended to use name instead.
+        Example: `jet-black`
+    name: str
+        The name of the character
+    canonical_name: str
+        The canonical name of the character
+    
+    description: str
+        The description of the character
+    mal_id: str
+        The id of the character on MyAnimeList
+    """
+
+    def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
+        self._data: dict = payload
+        self._session: aiohttp.ClientSession = session
+
+        self.id: str = self._data["id"]
+        self.type: str = self._data["type"]
+        self.slug: str = self._data["attributes"]["slug"]
+        self.name: str = self._data["attributes"]["name"]
+        self.canonical_name: str = self._data["attributes"]["canonicalName"]
+        self.mal_id: str = self._data["attributes"]["malId"]
+        self.description: str = self._data["attributes"]["description"]
+
+    def __repr__(self) -> str:
+        return f"<Character id={self.id} name='{self.name}'"
+
+    def __str__(self) -> str:
+        return self.name
+    
+    @property
+    def names(self) -> Optional[Name]:
+        """
+        The name of a character in different languages. Other languages will be listed if they exist.
+
+        Returns
+        -------
+        Optional[:class:`Name`]
+        """
+        try:
+            return Name(self._data["attributes"]["names"])
+        except (KeyError, TypeError):
+            return None     
+
+    @property
+    def other_names(self) -> Optional[list]:
+        """
+        Other names of a character
+
+        Returns
+        -------
+        Optional[list]
+        """
+        return self._data["attributes"]["otherNames"]
+
+    @property
+    def created_at(self) -> Optional[datetime]:
+        """
+        When the this character was added on Kitsu.
+
+        Returns
+        -------
+        Optional[datetime]
+        """
+        try:
+            return isoparse(self._data["attributes"]["createdAt"])
+        except (KeyError, TypeError):
+            return None
+
+    @property
+    def updated_at(self) -> Optional[datetime]:
+        """
+        The last time this character was updated on Kitsu.
+
+        Returns
+        -------
+        Optional[datetime]
+        """
+        try:
+            return isoparse(self._data["attributes"]["updatedAt"])
+        except (KeyError, TypeError):
+            return None   
 
 class Media:
     """Baseclass for Anime & Manga"""
