@@ -276,13 +276,13 @@ class Episode:
 class Name:
     def __init__(self, data: dict) -> None:
         self._data: dict = data
-    
+
     def __repr__(self) -> Optional[str]:
         value: Optional[str]
         for value in self._data.values():
             if value:
                 return value
-    
+
     def __str__(self) -> Optional[str]:
         return self.__repr__()
 
@@ -393,7 +393,7 @@ class Character:
 
     def __str__(self) -> str:
         return self.name
-    
+
     @property
     def names(self) -> Optional[Name]:
         """
@@ -406,7 +406,7 @@ class Character:
         try:
             return Name(self._data["attributes"]["names"])
         except (KeyError, TypeError):
-            return None     
+            return None
 
     @property
     def other_names(self) -> Optional[list]:

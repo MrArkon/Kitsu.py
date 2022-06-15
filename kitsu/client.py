@@ -276,7 +276,7 @@ class Client:
         Optional[Union[Character, List[Character], dict]]
             A :class:`Character` instance if only one result is found or the limit is 1, Multiple :class:`Character` instances otherwise.
             If the raw parameter is True it will return the raw json information by the API.
-        """        
+        """
         params = {"page[limit]": str(limit)}
 
         if query != "":
