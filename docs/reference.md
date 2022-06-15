@@ -35,7 +35,26 @@ API Models are simply the raw JSON data wrapped in a class with attributes, prop
    :undoc-members:
 ```
 
+### Character
+
+```{eval-rst}
+.. autoclass:: kitsu.Character()
+   :inherited-members:
+   :members:
+   :undoc-members:
+```
+
+### Name
+
+```{eval-rst}
+.. autoclass:: kitsu.models.Name()
+   :inherited-members:
+   :members:
+   :undoc-members:
+```
+
 ### Title
+
 ```{eval-rst}
 .. autoclass:: kitsu.models.Title()
    :members:
@@ -43,6 +62,7 @@ API Models are simply the raw JSON data wrapped in a class with attributes, prop
 ```
 
 ### Category
+
 ```{eval-rst}
 .. autoclass:: kitsu.models.Category()
    :members:
@@ -50,6 +70,7 @@ API Models are simply the raw JSON data wrapped in a class with attributes, prop
 ```
 
 ### StreamingLink
+
 ```{eval-rst}
 .. autoclass:: kitsu.models.StreamingLink()
    :members:
@@ -57,6 +78,7 @@ API Models are simply the raw JSON data wrapped in a class with attributes, prop
 ```
 
 ### Episode
+
 ```{eval-rst}
 .. autoclass:: kitsu.models.Episode()
    :members:

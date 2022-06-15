@@ -30,7 +30,7 @@ from urllib.parse import urlparse
 import aiohttp
 from dateutil.parser import isoparse
 
-__all__ = ("Anime", "Manga")
+__all__ = ("Anime", "Manga", "Character")
 
 HEADERS: dict = {
     "Accept": "application/vnd.api+json",
