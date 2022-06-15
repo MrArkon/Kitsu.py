@@ -445,7 +445,28 @@ class Character:
         try:
             return isoparse(self._data["attributes"]["updatedAt"])
         except (KeyError, TypeError):
-            return None   
+            return None
+
+    def image(
+        self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
+    ) -> Optional[str]:
+        """
+        The image of the character
+
+        Parameters
+        ----------
+        _type: Optional[Literal["tiny", "small", "medium", "large", "original"]], default: "original"
+            The size in which the image should be returned. The size will be orginal by default
+
+        Returns
+        -------
+        Optional[str]
+            The URL of the image
+        """
+        try:
+            return self._data["attributes"]["image"].get(_type, None)
+        except AttributeError:
+            return None
 
 class Media:
     """Baseclass for Anime & Manga"""
