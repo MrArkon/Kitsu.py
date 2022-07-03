@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import logging
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional
 
 import aiohttp
 
@@ -78,32 +78,25 @@ class Client:
             param_name = f"filter[{filter_name}]"
             params[param_name] = filter_value
 
-    async def get_anime(self, anime_id: int, *, raw: bool = False) -> Union[Anime, dict]:
+    async def get_anime(self, anime_id: int) -> Anime:
         """
         Fetch the information of an anime using its ID
 
         Parameters
         ----------
         anime_id: int
-            The ID of the Anime
-        raw: bool, default: False
-            Whether to return the information in a dict
+            The ID of the Anime onk kitsu.io
 
         Returns
         -------
-        Union[:class:`Anime`, :class:`dict`]
-            An :class:`Anime` instance, If the raw parameter is True it will return the raw json information by the API
+        :class:`Anime`
         """
         data = await self._get(url=f"{BASE}/anime/{anime_id}")
-
-        if raw:
-            return data
-
         return Anime(data["data"], self._session)
 
     async def search_anime(
-        self, query: str = "", limit: int = 1, *, raw: bool = False, **filters
-    ) -> Optional[Union[Anime, List[Anime], dict]]:
+        self, query: str = "", limit: int = 1, **filters
+    ) -> List[Anime]:
         """
         Search for an Anime with its Name or Filters
 
@@ -113,16 +106,12 @@ class Client:
             The query you want to search with
         limit: int, default: 1
             Limits the number of animes returned
-        raw: bool, default: False
-            Whether to return the information in a dict
         **filters: dict, optional
             The possible filters are: season, season_year, streamers & age_rating
 
         Returns
         -------
-        Optional[Union[Anime, List[Anime], dict]]
-            An :class:`Anime` instance if only one result is found or the limit is 1, Multiple :class:`Anime` instances otherwise.
-            If the raw parameter is True it will return the raw json information by the API.
+        List[:class:`Anime`]
         """
         params = {"page[limit]": str(limit)}
 
@@ -132,66 +121,38 @@ class Client:
         await self._insert_filters(filters, params)
 
         data = await self._get(url=f"{BASE}/anime", params=params)
+        return [Anime(payload, self._session) for payload in data["data"]]
 
-        if raw:
-            return data
-
-        if not data["data"]:
-            return None
-        elif len(data["data"]) == 1:
-            return Anime(data["data"][0], self._session)
-        else:
-            return [Anime(payload, self._session) for payload in data["data"]]
-
-    async def trending_anime(self, *, raw: bool = False) -> Optional[Union[List[Anime], dict]]:
+    async def trending_anime(self) -> List[Anime]:
         """
         Fetch trending animes
 
-        Parameters
-        ----------
-        raw: bool, default: False
-            Whether to return the information in a dict
-
         Returns
         -------
-        Optional[Union[List[Anime], dict]]
-            A list of :class:`Anime` instances. If the raw parameter is True it will return the raw json information by the API
+        List[:class:`Anime`]
         """
         data = await self._get(f"{BASE}/trending/anime")
-        if raw:
-            return data
+        return [Anime(payload, self._session) for payload in data["data"]]
 
-        if not data["data"]:
-            return None
-        else:
-            return [Anime(payload, self._session) for payload in data["data"]]
-
-    async def get_manga(self, manga_id: int, *, raw: bool = False) -> Union[Manga, dict]:
+    async def get_manga(self, manga_id: int) -> Manga:
         """
         Fetch the information of a manga using its ID
 
         Parameters
         ----------
         manga_id: int
-            The ID of the manga
-        raw: bool, default: False
-            Whether to return the information in a dict
+            The ID of the manga on kitsu.io
 
         Returns
         -------
-        Union[:class:`Manga`, :class:`dict`]
-            An :class:`Manga` instance, If the raw parameter is True it will return the raw json information by the API
+        :class:`Anime`
         """
         data = await self._get(url=f"{BASE}/manga/{manga_id}")
-
-        if raw:
-            return data["data"]
-
         return Manga(data["data"], self._session)
 
     async def search_manga(
-        self, query: str = "", limit: int = 1, *, raw: bool = False, **filters
-    ) -> Optional[Union[Manga, List[Manga], dict]]:
+        self, query: str = "", limit: int = 1, **filters
+    ) -> List[Manga]:
         """
         Search for a Manga with its Name or Filters
 
@@ -201,16 +162,12 @@ class Client:
             The query you want to search with
         limit: int, default: 1
             Limits the number of mangas returned
-        raw: bool, default: False
-            Whether to return the information in a dict
         **filters: dict, optional
             The possible filters are: season, season_year, streamers & age_rating
 
         Returns
         -------
-        Optional[Union[Anime, List[Manga], dict]]
-            A :class:`Manga` instance if only one result is found or the limit is 1, Multiple :class:`Manga` instances otherwise.
-            If the raw parameter is True it will return the raw json information by the API.
+        List[:class:`Manga`]
         """
         params = {"page[limit]": str(limit)}
 
@@ -221,39 +178,19 @@ class Client:
 
         data = await self._get(url=f"{BASE}/manga", params=params)
 
-        if raw:
-            return data
+        return [Manga(payload, self._session) for payload in data["data"]]
 
-        if not data["data"]:
-            return None
-        elif len(data["data"]) == 1:
-            return Manga(data["data"][0], self._session)
-        else:
-            return [Manga(payload, self._session) for payload in data["data"]]
-
-    async def trending_manga(self, *, raw: bool = False) -> Optional[Union[List[Manga], dict]]:
+    async def trending_manga(self) -> List[Manga]:
         """
         Fetch trending Mangas
 
-        Parameters
-        ----------
-        raw: bool, default: False
-            Whether to return the information in a dict
-
         Returns
         -------
-        Optional[Union[List[Manga], dict]]
-            A list of :class:`Manga` instances. If the raw parameter is True it will return the raw json information by the API
+        List[:class:`Manga`]
         """
         data = await self._get(f"{BASE}/trending/manga")
-        if raw:
-            return data
-
-        if not data["data"]:
-            return None
-        else:
-            return [Manga(payload, self._session) for payload in data["data"]]
+        return [Manga(payload, self._session) for payload in data["data"]]
 
     async def close(self) -> None:
-        """Closes the internal http session"""
+        """Closes the internal HTTP session"""
         return await self._session.close()
