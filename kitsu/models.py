@@ -57,8 +57,10 @@ class Category:
         If the category is NSFW(Not safe for work/18+)
     """
 
+    __slots__ = ("id", "title", "description", "total_media_count", "nsfw", "_data")
+
     def __init__(self, data: dict) -> None:
-        self._data: dict = data
+        self._data = data
 
         self.id: str = self._data["id"]
         self.title: str = self._data["attributes"]["title"]
@@ -115,8 +117,10 @@ class StreamingLink:
         The dubs available on this streaming link
     """
 
+    __slots__ = ("id", "subs", "dubs", "_data")
+
     def __init__(self, data: dict) -> None:
-        self._data: dict = data
+        self._data = data
 
         self.id: str = self._data["id"]
         self.subs: List[str] = self._data["attributes"]["subs"]
@@ -132,7 +136,7 @@ class StreamingLink:
         Optional[str]
         """
         try:
-            _parsed_url = urlparse(self.url).hostname.split(".") # type: ignore
+            _parsed_url = urlparse(self.url).hostname.split(".")  # type: ignore
             if _parsed_url[0] not in ["www", "beta"]:
                 return _parsed_url[0].capitalize()
             else:
@@ -204,8 +208,10 @@ class Episode:
         The date on which this episode was aired
     """
 
+    __slots__ = ("id", "type", "canonical_title", "synopsis", "season_number", "episode_number", "air_date", "_data")
+
     def __init__(self, data: dict) -> None:
-        self._data: dict = data
+        self._data = data
 
         self.id: str = self._data["id"]
         self.type: str = self._data["type"]
@@ -275,7 +281,7 @@ class Episode:
 
 class Title:
     def __init__(self, data: dict) -> None:
-        self._data: dict = data
+        self._data = data
 
     def __repr__(self) -> Optional[str]:
         value: Optional[str]
@@ -322,6 +328,22 @@ class Title:
 
 class Media:
     """Baseclass for Anime & Manga"""
+
+    __slots__ = (
+        "id",
+        "type",
+        "slug",
+        "synopsis",
+        "canonical_title",
+        "abbreviated_titles",
+        "rating_frequencies",
+        "age_rating",
+        "age_rating_guide",
+        "status",
+        "tba",
+        "_data",
+        "_session",
+    )
 
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         self._data: dict = payload
@@ -584,6 +606,8 @@ class Anime(Media):
         If the Anime is NSFW(Not safe for work/18+)
     """
 
+    __slots__ = ("subtype", "youtube_video_id", "nsfw")
+
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         super().__init__(payload, session)
 
@@ -692,6 +716,8 @@ class Manga(Media):
         The subtype of the Manga
     serialization: Optional[str]
     """
+
+    __slots__ = ("subtype", "serialization")
 
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         super().__init__(payload, session)

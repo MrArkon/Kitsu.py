@@ -85,7 +85,7 @@ class Client:
         Parameters
         ----------
         anime_id: int
-            The ID of the Anime onk kitsu.io
+            The ID of the Anime on kitsu.io
 
         Returns
         -------
@@ -94,11 +94,9 @@ class Client:
         data = await self._get(url=f"{BASE}/anime/{anime_id}")
         return Anime(data["data"], self._session)
 
-    async def search_anime(
-        self, query: str = "", limit: int = 1, **filters
-    ) -> List[Anime]:
+    async def search_anime(self, query: str = "", limit: int = 1, **filters) -> List[Anime]:
         """
-        Search for an Anime with its Name or Filters
+        Search for an Anime with its name or filters
 
         Parameters
         ----------
@@ -150,9 +148,7 @@ class Client:
         data = await self._get(url=f"{BASE}/manga/{manga_id}")
         return Manga(data["data"], self._session)
 
-    async def search_manga(
-        self, query: str = "", limit: int = 1, **filters
-    ) -> List[Manga]:
+    async def search_manga(self, query: str = "", limit: int = 1, **filters) -> List[Manga]:
         """
         Search for a Manga with its Name or Filters
 
