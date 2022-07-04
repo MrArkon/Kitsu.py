@@ -29,7 +29,7 @@ from typing import Any, List, Optional
 import aiohttp
 
 from .errors import BadRequest, HTTPException, NotFound
-from .models import Anime, Manga
+from .models import Anime, Character, Manga
 
 __all__ = ("Client",)
 __log__: logging.Logger = logging.getLogger(__name__)
@@ -64,12 +64,10 @@ class Client:
 
             if response.status == 200:
                 return data
-
             if response.status == 400:
                 raise BadRequest(response, data["errors"][0]["detail"])
             if response.status == 404:
                 raise NotFound(response, data["errors"][0]["detail"])
-
             raise HTTPException(response, await response.text(), response.status)
 
     async def _insert_filters(self, filters: dict, params: dict) -> None:
@@ -94,7 +92,9 @@ class Client:
         data = await self._get(url=f"{BASE}/anime/{anime_id}")
         return Anime(data["data"], self._session)
 
-    async def search_anime(self, query: str = "", limit: int = 1, **filters) -> List[Anime]:
+    async def search_anime(
+        self, query: str = "", limit: int = 1, **filters
+    ) -> List[Anime]:
         """
         Search for an Anime with its name or filters
 
@@ -115,7 +115,6 @@ class Client:
 
         if query != "":
             params["filter[text]"] = query
-
         await self._insert_filters(filters, params)
 
         data = await self._get(url=f"{BASE}/anime", params=params)
@@ -148,7 +147,9 @@ class Client:
         data = await self._get(url=f"{BASE}/manga/{manga_id}")
         return Manga(data["data"], self._session)
 
-    async def search_manga(self, query: str = "", limit: int = 1, **filters) -> List[Manga]:
+    async def search_manga(
+        self, query: str = "", limit: int = 1, **filters
+    ) -> List[Manga]:
         """
         Search for a Manga with its Name or Filters
 
@@ -169,12 +170,61 @@ class Client:
 
         if query != "":
             params["filter[text]"] = query
-
         await self._insert_filters(filters, params)
 
         data = await self._get(url=f"{BASE}/manga", params=params)
 
         return [Manga(payload, self._session) for payload in data["data"]]
+
+    async def get_character(self, character_id: int) -> Character:
+        """
+        Fetch the information of a character using its ID
+
+        Parameters
+        ----------
+        character_id: int
+            The ID of the manga
+        raw: bool, default: False
+            Whether to return the information in a dict
+
+        Returns
+        -------
+        :class:`Character`
+            A :class:`Character` instance
+        """
+        data = await self._get(url=f"{BASE}/characters/{character_id}")
+        return Character(data["data"], self._session)
+
+    async def search_character(
+        self, query: str = "", limit: int = 1, **filters
+    ) -> Optional[List[Character]]:
+        """
+        Search for a character with its Name or Filters
+
+        Parameters
+        ----------
+        query: str, default: ""
+            The query you want to search with
+        limit: int, default: 1
+            Limits the number of character returned
+        raw: bool, default: False
+            Whether to return the information in a dict
+        **filters: dict, optional
+            The possible filters are: name, slug
+
+        Returns
+        -------
+        Optional[List[Character]]
+            A list of :class:`Character` instances.
+        """
+        params = {"page[limit]": str(limit)}
+
+        if query != "":
+            params["filter[name]"] = query
+        await self._insert_filters(filters, params)
+
+        data = await self._get(url=f"{BASE}/characters", params=params)
+        return [Character(payload, self._session) for payload in data["data"]]
 
     async def trending_manga(self) -> List[Manga]:
         """
