@@ -208,7 +208,16 @@ class Episode:
         The date on which this episode was aired
     """
 
-    __slots__ = ("id", "type", "canonical_title", "synopsis", "season_number", "episode_number", "air_date", "_data")
+    __slots__ = (
+        "id",
+        "type",
+        "canonical_title",
+        "synopsis",
+        "season_number",
+        "episode_number",
+        "air_date",
+        "_data",
+    )
 
     def __init__(self, data: dict) -> None:
         self._data = data
@@ -264,7 +273,10 @@ class Episode:
             return None
 
     def thumbnail(
-        self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
+        self,
+        _type: Optional[
+            Literal["tiny", "small", "medium", "large", "original"]
+        ] = "original",
     ) -> Optional[str]:
         """
         The url to the thumbnail of this episode
@@ -314,6 +326,7 @@ class Name:
         """
         return self._data.get("ja_jp", None)
 
+
 class Title:
     def __init__(self, data: dict) -> None:
         self._data = data
@@ -360,6 +373,7 @@ class Title:
         """
         return self._data.get("ja_jp", None)
 
+
 class Character:
     """
     The information about a Character wrapped in a class
@@ -375,7 +389,7 @@ class Character:
         The name of the character
     canonical_name: str
         The canonical name of the character
-    
+
     description: str
         The description of the character
     mal_id: str
@@ -454,7 +468,10 @@ class Character:
             return None
 
     def image(
-        self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
+        self,
+        _type: Optional[
+            Literal["tiny", "small", "medium", "large", "original"]
+        ] = "original",
     ) -> Optional[str]:
         """
         The image of the character
@@ -473,6 +490,7 @@ class Character:
             return self._data["attributes"]["image"].get(_type, None)
         except AttributeError:
             return None
+
 
 class Media:
     """Baseclass for Anime & Manga"""
@@ -502,13 +520,21 @@ class Media:
         self.slug: str = self._data["attributes"]["slug"]
         self.synopsis: str = self._data["attributes"]["synopsis"]
         self.canonical_title: str = self._data["attributes"]["canonicalTitle"]
-        self.abbreviated_titles: Optional[List[str]] = self._data["attributes"]["abbreviatedTitles"]
-        self.rating_frequencies: Optional[Dict[str, str]] = self._data["attributes"]["ratingFrequencies"]
-        self.age_rating: Optional[Literal["G", "PG", "R", "R18"]] = self._data["attributes"]["ageRating"]
-        self.age_rating_guide: Optional[str] = self._data["attributes"]["ageRatingGuide"]
-        self.status: Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]] = self._data["attributes"][
-            "status"
+        self.abbreviated_titles: Optional[List[str]] = self._data["attributes"][
+            "abbreviatedTitles"
         ]
+        self.rating_frequencies: Optional[Dict[str, str]] = self._data["attributes"][
+            "ratingFrequencies"
+        ]
+        self.age_rating: Optional[Literal["G", "PG", "R", "R18"]] = self._data[
+            "attributes"
+        ]["ageRating"]
+        self.age_rating_guide: Optional[str] = self._data["attributes"][
+            "ageRatingGuide"
+        ]
+        self.status: Optional[
+            Literal["current", "finished", "tba", "unreleased", "upcoming"]
+        ] = self._data["attributes"]["status"]
         self.tba: Optional[str] = self._data["attributes"].get("tba")
 
     def __repr__(self) -> str:
@@ -519,13 +545,13 @@ class Media:
 
     async def _fetch_categories(self) -> Optional[List[Category]]:
         async with self._session.get(
-            url=f"https://kitsu.io/api/edge/{self.type}/{self.id}/categories", headers=HEADERS
+            url=f"https://kitsu.io/api/edge/{self.type}/{self.id}/categories",
+            headers=HEADERS,
         ) as response:
             if response.status == 200:
                 _raw_data = await response.json()
             else:
                 return None
-
         return [Category(data) for data in _raw_data["data"]]
 
     @property
@@ -680,7 +706,10 @@ class Media:
             return None
 
     def poster_image(
-        self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
+        self,
+        _type: Optional[
+            Literal["tiny", "small", "medium", "large", "original"]
+        ] = "original",
     ) -> Optional[str]:
         """
         The poster image of the Anime/Manga
@@ -700,7 +729,10 @@ class Media:
         except AttributeError:
             return None
 
-    def cover_image(self, _type: Optional[Literal["tiny", "small", "large", "original"]] = "original") -> Optional[str]:
+    def cover_image(
+        self,
+        _type: Optional[Literal["tiny", "small", "large", "original"]] = "original",
+    ) -> Optional[str]:
         """
         The cover image of the Anime/Manga
 
@@ -759,30 +791,33 @@ class Anime(Media):
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         super().__init__(payload, session)
 
-        self.subtype: Optional[Literal["ONA", "OVA", "TV", "movie", "music", "special"]] = self._data["attributes"][
-            "subtype"
+        self.subtype: Optional[
+            Literal["ONA", "OVA", "TV", "movie", "music", "special"]
+        ] = self._data["attributes"]["subtype"]
+        self.youtube_video_id: Optional[str] = self._data["attributes"][
+            "youtubeVideoId"
         ]
-        self.youtube_video_id: Optional[str] = self._data["attributes"]["youtubeVideoId"]
         self.nsfw: Optional[bool] = self._data["attributes"]["nsfw"]
 
     async def _fetch_streaming_links(self) -> Optional[List[StreamingLink]]:
         async with self._session.get(
-            url=f"https://kitsu.io/api/edge/anime/{self.id}/streaming-links", headers=HEADERS
+            url=f"https://kitsu.io/api/edge/anime/{self.id}/streaming-links",
+            headers=HEADERS,
         ) as response:
             if response.status == 200:
                 _raw_data = await response.json()
             else:
                 return None
-
         return [StreamingLink(data) for data in _raw_data["data"]]
 
     async def _fetch_episodes(self) -> Optional[List[Episode]]:
-        async with self._session.get(url=f"https://kitsu.io/api/edge/anime/{self.id}/episodes", headers=HEADERS) as response:
+        async with self._session.get(
+            url=f"https://kitsu.io/api/edge/anime/{self.id}/episodes", headers=HEADERS
+        ) as response:
             if response.status == 200:
                 _raw_data = await response.json()
             else:
                 return None
-
         return [Episode(data) for data in _raw_data["data"]]
 
     @property
@@ -870,9 +905,9 @@ class Manga(Media):
     def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
         super().__init__(payload, session)
 
-        self.subtype: Optional[Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]] = self._data[
-            "attributes"
-        ]["subtype"]
+        self.subtype: Optional[
+            Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]
+        ] = self._data["attributes"]["subtype"]
         self.serialization: Optional[str] = self._data["attributes"]["serialization"]
 
     @property
