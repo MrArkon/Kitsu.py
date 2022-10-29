@@ -136,7 +136,7 @@ class StreamingLink:
         Optional[str]
         """
         try:
-            _parsed_url = urlparse(self.url).hostname.split(".")  # type: ignore
+            _parsed_url = urlparse(self.url).hostname.split(".")
             if _parsed_url[0] not in ["www", "beta"]:
                 return _parsed_url[0].capitalize()
             else:

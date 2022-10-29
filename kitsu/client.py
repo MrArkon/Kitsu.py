@@ -34,7 +34,7 @@ from .models import Anime, Manga
 __all__ = ("Client",)
 __log__: logging.Logger = logging.getLogger(__name__)
 
-BASE: str = "https://kitsu.io/api/edge"
+BASE = "https://kitsu.io/api/edge"
 
 
 class Client:
