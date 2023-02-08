@@ -6,7 +6,7 @@ A Simple & Lightweight asynchronous python wrapper for Kitsu's Manga & Anime API
 """
 
 __title__ = "kitsu"
-__version__ = "1.1.0"
+__version__ = "1.1.2"
 __author__ = "MrArkon"
 __license__ = "MIT"
 __copyright__ = "Copyright 2021-present MrArkon"
