@@ -24,733 +24,424 @@ SOFTWARE.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Dict, List, Literal, Optional
-from urllib.parse import urlparse
+from typing import TYPE_CHECKING, Optional
 
-import aiohttp
-from dateutil.parser import isoparse
-
-__all__ = ("Anime", "Manga")
-
-HEADERS: dict = {
-    "Accept": "application/vnd.api+json",
-    "Content-Type": "application/vnd.api+json",
-    "User-Agent": "Kitsu.py (https://github.com/MrArkon/kitsu.py)",
-}
+if TYPE_CHECKING:
+    from .client import Client
+    from .types import AnimeData
+    from .types import Image as ImagePayload
+    from .types import MangaData
 
 
-class Category:
+class Image:
     """
-    Represents a category of an Anime/Manga
+    Represents a poster/cover image for an Anime or Manga.
 
     Attributes
     ----------
-    id: str
-        The UUID of the category on kitsu
-    title: str
-        The title of the category
-    description: str
-        The description of the category
-    total_media_count: str
-        The total media count of the category
-    nsfw: bool
-        If the category is NSFW(Not safe for work/18+)
+    tiny: :class:`str`
+        The URL of this image in its tiny size.
+    small: :class:`str`
+        The URL of this image in its small size.
+    medium: :class:`str`
+        The URL of this image in its medium size.
+    large: :class:`str`
+        The URL of this image in its large size.
+    original: :class:`str`
+        The URL of this image in its original size.
     """
 
-    __slots__ = ("id", "title", "description", "total_media_count", "nsfw", "_data")
+    __slots__ = ("_data", "tiny", "small", "medium", "large", "original")
 
-    def __init__(self, data: dict) -> None:
-        self._data = data
+    def __init__(self, payload: ImagePayload) -> None:
+        self._data = payload
 
-        self.id: str = self._data["id"]
-        self.title: str = self._data["attributes"]["title"]
-        self.description: str = self._data["attributes"]["description"]
-        self.total_media_count: str = self._data["attributes"]["totalMediaCount"]
-        self.nsfw: bool = self._data["attributes"]["nsfw"]
+        self.tiny = self._data["tiny"]
+        self.small = self._data["small"]
+        self.medium = self._data["medium"]
+        self.large = self._data["large"]
+        self.original = self._data["original"]
+
+
+class Anime:
+    """Represents an Anime returned from the Kitsu API.
+
+    Attributes
+    ----------
+    id: :class:`int`
+        The UUID associated with this Anime on Kitsu.
+    slug: :class:`str`
+        The unique string identifier for this Anime.
+    synopsis: :class:`str`
+        The synopsis/description of this Anime.
+    description: :class:`str`
+        Alias to synopsis.
+    canonical_title: :class:`str`
+        The canonical title of this Anime.
+    abbreviated_titles: List[:class:`str`]
+        A list of abbreviated titles for this Anime.
+    average_rating: :class:`float`
+        The average rating of this Anime out of 100 on Kitsu.
+    rating_frequencies: Dict[:class:`str`, :class:`str`]
+        A mapping of ratings to its frequencies for this Anime.
+    user_count: :class:`int`
+        The number of users associated with this Anime on Kitsu.
+    favorites_count: :class:`int`
+        The number of users who have added this Anime to their favorites.
+    popularity_rank: :class:`int`
+        The popularity rank of this Anime on Kitsu.
+    rating_rank: :class:`int`
+        The rating rank of this Anime on Kitsu.
+    age_rating: Literal["G", "PG", "R", "R18"]
+        The age rating of this Anime.
+    age_rating_guide: :class:`str`
+        A string describing the age rating of this Anime.
+    subtype: Literal["ONA", "OVA", "TV", "movie", "music", "special"]
+        The subtype of this Anime.
+    status: Literal["current", "finished", "tba", "unreleased", "upcoming"]
+        The status of this Anime.
+    episode_count: :class:`int`
+        The number of episodes in this Anime.
+    episode_length: :class:`int`
+        The average length of each episode in minutes.
+    youtube_video_id: :class:`str`
+        The youtube video id associated with this Anime.
+    nsfw: :class:`bool`
+        Whether this Anime is marked as NSFW.
+    """
+
+    __slots__ = (
+        "_data",
+        "_attributes",
+        "_client",
+        "id",
+        "slug",
+        "synopsis",
+        "description",
+        "_titles",
+        "canonical_title",
+        "abbreviated_titles",
+        "average_rating",
+        "rating_frequencies",
+        "user_count",
+        "favorites_count",
+        "popularity_rank",
+        "rating_rank",
+        "age_rating",
+        "age_rating_guide",
+        "subtype",
+        "status",
+        "episode_count",
+        "episode_length",
+        "youtube_video_id",
+        "nsfw",
+    )
+
+    def __init__(self, payload: AnimeData, client: Client) -> None:
+        self._data = payload
+        self._attributes = self._data["attributes"]
+        self._client = client
+
+        self.id = int(self._data["id"])
+        self.slug = self._attributes["slug"]
+        self.synopsis = self._attributes["synopsis"]
+        self.description = self.synopsis
+        self._titles = self._attributes["titles"]
+        self.canonical_title = self._attributes["canonicalTitle"]
+        self.abbreviated_titles = self._attributes["abbreviatedTitles"]
+        self.average_rating = float(self._attributes["averageRating"])
+        self.rating_frequencies = self._attributes["ratingFrequencies"]
+        self.user_count = self._attributes["userCount"]
+        self.favorites_count = self._attributes["favoritesCount"]
+        self.popularity_rank = self._attributes["popularityRank"]
+        self.rating_rank = self._attributes["ratingRank"]
+        self.age_rating = self._attributes["ageRating"]
+        self.age_rating_guide = self._attributes["ageRatingGuide"]
+        self.subtype = self._attributes["subtype"]
+        self.status = self._attributes["status"]
+        self.episode_count = self._attributes["episodeCount"]
+        self.episode_length = self._attributes["episodeLength"]
+        self.youtube_video_id = self._attributes["youtubeVideoId"]
+        self.nsfw = self._attributes["nsfw"]
 
     def __repr__(self) -> str:
-        return f"<Category id={self.id} title='{self.title}'>"
+        return f"<kitsu.Anime id={self.id}> title={self.title}"
 
     def __str__(self) -> str:
         return self.title
 
     @property
-    def created_at(self) -> Optional[datetime]:
-        """
-        The time when this category was added on Kitsu
-
-        Returns
-        -------
-        Optional[datetime]
-        """
-        try:
-            return isoparse(self._data["attributes"]["createdAt"])
-        except (KeyError, TypeError):
-            return None
-
-    @property
-    def updated_at(self) -> Optional[datetime]:
-        """
-        The last time this category was updated on Kitsu
-
-        Returns
-        -------
-        Optional[datetime]
-        """
-        try:
-            return isoparse(self._data["attributes"]["updatedAt"])
-        except (KeyError, TypeError):
-            return None
-
-
-class StreamingLink:
-    """
-    Represents the streaming link for an Anime
-
-    Attributes
-    ----------
-    id: str
-        The UUID of the streaming link on kitsu
-    subs: list
-        The subs available on this streaming link
-    dubs: list
-        The dubs available on this streaming link
-    """
-
-    __slots__ = ("id", "subs", "dubs", "_data")
-
-    def __init__(self, data: dict) -> None:
-        self._data = data
-
-        self.id: str = self._data["id"]
-        self.subs: List[str] = self._data["attributes"]["subs"]
-        self.dubs: List[str] = self._data["attributes"]["dubs"]
-
-    @property
-    def title(self) -> Optional[str]:
-        """
-        The title of the streaming link
-
-        Returns
-        -------
-        Optional[str]
-        """
-        try:
-            _parsed_url = urlparse(self.url).hostname.split(".")
-            if _parsed_url[0] not in ["www", "beta"]:
-                return _parsed_url[0].capitalize()
-            else:
-                return _parsed_url[1].capitalize()
-        except:
-            return None
-
-    @property
     def url(self) -> str:
-        """
-        The url to the streaming link
+        """The Kitsu URL to this Anime.
 
         Returns
         -------
-        str
+        :class:`str`
         """
-        _url: str = self._data["attributes"]["url"]
-        if _url.startswith(("http://", "https://")):
-            return _url
-        else:
-            return "https://" + _url
+        return f"https://kitsu.io/anime/{self.slug}"
 
     @property
-    def created_at(self) -> Optional[datetime]:
-        """
-        The time when this link was added on Kitsu
+    def title(self) -> str:
+        """The title of this Anime.
 
         Returns
         -------
-        Optional[datetime]
+        :class:`str`
+            The title of the Anime, defaults to ``en`` language key in the
+            titles mapping, fall backs to the next available key if the ``en``
+            key is not present.
         """
-        try:
-            return isoparse(self._data["attributes"]["createdAt"])
-        except (KeyError, TypeError):
-            return None
+        return self._titles.get("en", (list(self._titles.values())[0]))
 
     @property
-    def updated_at(self) -> Optional[datetime]:
-        """
-        The last time this streaming link was updated on Kitsu.
+    def created_at(self) -> datetime:
+        """The UTC datetime of when this Anime was created on Kitsu.
 
         Returns
         -------
-        Optional[datetime]
+        :class:`datetime`
         """
-        try:
-            return isoparse(self._data["attributes"]["updatedAt"])
-        except (KeyError, TypeError):
-            return None
-
-
-class Episode:
-    """
-    Represents an episode of an Anime
-
-    Attributes
-    ----------
-    id: str
-        The UUID of the Episode on kitsu
-    canonical_title: str
-        The canonical title of the episode
-    synopsis: str
-        The synopsis/description of the episode
-    season_number: str
-        The season number this episode belongs to
-    episode_number: str
-        The number of the episode
-    air_date: str
-        The date on which this episode was aired
-    """
-
-    __slots__ = ("id", "type", "canonical_title", "synopsis", "season_number", "episode_number", "air_date", "_data")
-
-    def __init__(self, data: dict) -> None:
-        self._data = data
-
-        self.id: str = self._data["id"]
-        self.type: str = self._data["type"]
-        self.canonical_title: str = self._data["attributes"]["canonicalTitle"]
-        self.synopsis: str = self._data["attributes"]["synopsis"]
-        self.season_number: str = self._data["attributes"]["seasonNumber"]
-        self.episode_number: str = self._data["attributes"]["number"]
-        self.air_date: str = self._data["attributes"]["airdate"]
-
-    @property
-    def title(self) -> Optional[Title]:
-        """
-        The titles of the episode in different languages. Other languages will be listed if they exist.
-
-        Returns
-        -------
-        Optional[:class:`Title`]
-        """
-        try:
-            return Title(self._data["attributes"]["titles"])
-        except (KeyError, TypeError):
-            return None
-
-    @property
-    def created_at(self) -> Optional[datetime]:
-        """
-        When this episode was added on Kitsu
-
-        Returns
-        -------
-        Optional[datetime]
-        """
-        try:
-            return isoparse(self._data["attributes"]["createdAt"])
-        except (KeyError, TypeError):
-            return None
+        return datetime.fromisoformat(self._attributes["createdAt"])
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """
-        The last time this episode was updated on Kitsu
+        """The UTC datetime of when this Anime was last updated on Kitsu.
 
         Returns
         -------
-        Optional[datetime]
+        :class:`datetime`
         """
-        try:
-            return isoparse(self._data["attributes"]["updatedAt"])
-        except (KeyError, TypeError):
-            return None
-
-    def thumbnail(
-        self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
-    ) -> Optional[str]:
-        """
-        The url to the thumbnail of this episode
-
-        Returns
-        -------
-        Optional[str]
-        """
-        try:
-            return self._data["attributes"]["thumbnail"].get(_type, None)
-        except AttributeError:
-            return None
-
-
-class Title:
-    def __init__(self, data: dict) -> None:
-        self._data = data
-
-    def __repr__(self) -> Optional[str]:
-        value: Optional[str]
-        for value in self._data.values():
-            if value:
-                return value
-
-    def __str__(self) -> Optional[str]:
-        return self.__repr__()
+        return datetime.fromisoformat(self._attributes["updatedAt"])
 
     @property
-    def en(self) -> Optional[str]:
-        """
-        The title in english
+    def start_date(self) -> datetime:
+        """The UTC datetime of when this Anime started.
 
         Returns
         -------
-        Optional[str]
+        :class:`datetime`
         """
-        return self._data.get("en", None)
-
-    @property
-    def en_jp(self) -> Optional[str]:
-        """
-        The japanese title in english characters
-
-        Returns
-        -------
-        Optional[str]
-        """
-        return self._data.get("en_jp", None)
-
-    @property
-    def ja_jp(self) -> Optional[str]:
-        """
-        The title in japanese
-
-        Returns
-        -------
-        Optional[str]
-        """
-        return self._data.get("ja_jp", None)
-
-
-class Media:
-    """Baseclass for Anime & Manga"""
-
-    __slots__ = (
-        "id",
-        "type",
-        "slug",
-        "synopsis",
-        "canonical_title",
-        "abbreviated_titles",
-        "rating_frequencies",
-        "age_rating",
-        "age_rating_guide",
-        "status",
-        "tba",
-        "_data",
-        "_session",
-    )
-
-    def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
-        self._data: dict = payload
-        self._session: aiohttp.ClientSession = session
-
-        self.id: str = self._data["id"]
-        self.type: str = self._data["type"]
-        self.slug: str = self._data["attributes"]["slug"]
-        self.synopsis: str = self._data["attributes"]["synopsis"]
-        self.canonical_title: str = self._data["attributes"]["canonicalTitle"]
-        self.abbreviated_titles: Optional[List[str]] = self._data["attributes"]["abbreviatedTitles"]
-        self.rating_frequencies: Optional[Dict[str, str]] = self._data["attributes"]["ratingFrequencies"]
-        self.age_rating: Optional[Literal["G", "PG", "R", "R18"]] = self._data["attributes"]["ageRating"]
-        self.age_rating_guide: Optional[str] = self._data["attributes"]["ageRatingGuide"]
-        self.status: Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]] = self._data["attributes"][
-            "status"
-        ]
-        self.tba: Optional[str] = self._data["attributes"].get("tba")
-
-    def __repr__(self) -> str:
-        return f"<{self.type.capitalize()} id={self.id} title='{self.title}'>"
-
-    def __str__(self) -> str:
-        return str(self.title)
-
-    async def _fetch_categories(self) -> Optional[List[Category]]:
-        async with self._session.get(
-            url=f"https://kitsu.io/api/edge/{self.type}/{self.id}/categories", headers=HEADERS
-        ) as response:
-            if response.status == 200:
-                _raw_data = await response.json()
-            else:
-                return None
-
-        return [Category(data) for data in _raw_data["data"]]
-
-    @property
-    def title(self) -> Optional[Title]:
-        """
-        The titles of the Anime/Manga in different languages. Other languages will be listed if they exist.
-
-        Returns
-        -------
-        Optional[:class:`Title`]
-        """
-        try:
-            return Title(self._data["attributes"]["titles"])
-        except (KeyError, TypeError):
-            return None
-
-    @property
-    async def categories(self) -> Optional[List[Category]]:
-        """
-        The categories or genres of the Anime/Manga
-
-        Returns
-        -------
-        Optional[List[:class:`Title`]]
-        """
-        return await self._fetch_categories()
-
-    @property
-    def created_at(self) -> Optional[datetime]:
-        """
-        When the Anime/Manga was added on Kitsu. (Use start_date instead)
-
-        Returns
-        -------
-        Optional[datetime]
-        """
-        try:
-            return isoparse(self._data["attributes"]["createdAt"])
-        except (KeyError, TypeError):
-            return None
-
-    @property
-    def updated_at(self) -> Optional[datetime]:
-        """
-        The last time Anime/Manga was updated on Kitsu.
-
-        Returns
-        -------
-        Optional[datetime]
-        """
-        try:
-            return isoparse(self._data["attributes"]["updatedAt"])
-        except (KeyError, TypeError):
-            return None
-
-    @property
-    def average_rating(self) -> Optional[float]:
-        """
-        The average rating of the Anime/Manga on Kitsu
-
-        Returns
-        -------
-        Optional[float]
-        """
-        try:
-            return float(self._data["attributes"]["averageRating"])
-        except (KeyError, TypeError):
-            return None
-
-    @property
-    def user_count(self) -> Optional[int]:
-        """
-        The user count of the Anime/Manga on Kitsu
-
-        Returns
-        -------
-        Optional[int]
-        """
-        try:
-            return int(self._data["attributes"]["userCount"])
-        except (KeyError, TypeError):
-            return None
-
-    @property
-    def favorites_count(self) -> Optional[int]:
-        """
-        The favorites count of the Anime/Manga on Kitsu
-
-        Returns
-        -------
-        Optional[int]
-        """
-        try:
-            return int(self._data["attributes"]["favoritesCount"])
-        except (KeyError, TypeError):
-            return None
-
-    @property
-    def start_date(self) -> Optional[datetime]:
-        """
-        The date on which the Anime/Manga started
-
-        Returns
-        -------
-        Optional[datetime]
-        """
-        try:
-            return datetime.strptime(self._data["attributes"]["startDate"], "%Y-%m-%d")
-        except (KeyError, TypeError):
-            return None
+        return datetime.strptime(self._attributes["startDate"], "%Y-%m-%d")
 
     @property
     def end_date(self) -> Optional[datetime]:
-        """
-        The date on which the Anime/Manga ended.
+        """The UTC datetime of when this Anime ended, if it has.
 
         Returns
         -------
-        Optional[datetime]
+        Optional[:class:`datetime`]
         """
-        try:
-            return datetime.strptime(self._data["attributes"]["endDate"], "%Y-%m-%d")
-        except (KeyError, TypeError):
-            return None
+        if (payload := self._attributes["endDate"]) is not None:
+            return datetime.strptime(payload, "%Y-%m-%d")
 
     @property
-    def popularity_rank(self) -> Optional[int]:
-        """
-        The popularity rank of the Anime/Manga on Kitsu
+    def poster_image(self) -> Optional[Image]:
+        """The poster image of this Anime.
 
         Returns
         -------
-        Optional[int]
+        :class:`Image`
         """
-        try:
-            return int(self._data["attributes"]["popularityRank"])
-        except (KeyError, TypeError):
-            return None
+        if (payload := self._attributes["posterImage"]) is not None:
+            return Image(payload)
 
     @property
-    def rating_rank(self) -> Optional[int]:
-        """
-        The rating rank of the Anime/Manga on Kitsu
+    def cover_image(self) -> Optional[Image]:
+        """The cover image of this Anime.
 
         Returns
         -------
-        Optional[int]
+        :class:`Image`
         """
-        try:
-            return int(self._data["attributes"]["ratingRank"])
-        except (KeyError, TypeError):
-            return None
-
-    def poster_image(
-        self, _type: Optional[Literal["tiny", "small", "medium", "large", "original"]] = "original"
-    ) -> Optional[str]:
-        """
-        The poster image of the Anime/Manga
-
-        Parameters
-        ----------
-        _type: Optional[Literal["tiny", "small", "medium", "large", "original"]], default: "original"
-            The size in which the image should be returned. The size will be orginal by default
-
-        Returns
-        -------
-        Optional[str]
-            The URL of the image
-        """
-        try:
-            return self._data["attributes"]["posterImage"].get(_type, None)
-        except AttributeError:
-            return None
-
-    def cover_image(self, _type: Optional[Literal["tiny", "small", "large", "original"]] = "original") -> Optional[str]:
-        """
-        The cover image of the Anime/Manga
-
-        Parameters
-        ----------
-        _type: Optional[Literal["tiny", "small", "medium", "large", "original"]], default: "original"
-            The size in which the image should be returned. The size will be orginal by default
-
-        Returns
-        -------
-        Optional[str]
-            The URL of the image
-        """
-        try:
-            return self._data["attributes"]["coverImage"].get(_type, None)
-        except AttributeError:
-            return None
+        if (payload := self._attributes["coverImage"]) is not None:
+            return Image(payload)
 
 
-class Anime(Media):
-    """
-    The information about an Anime wrapped in a class
+class Manga:
+    """Represents an Manga returned from the Kitsu API.
 
     Attributes
     ----------
-    id: str
-        The UUID of the Anime on Kitsu
-    slug: str
-        The name of the Anime with hyphens, It's recommended to use title or canoncial_title instead.
-        Example: `cowboy-bebop`
-    canonical_title: str
-        The canonical title of the Anime
-    synopsis: str
-        The synopsis/description of the Anime
-    abbreviated_titles: Optional[List[str]]
-        A list of abbreivated titles for the Anime
-    rating_frequencies: Optional[Dict[str, str]]
-        The rating fequencies of the Anime
+    id: :class:`int`
+        The UUID associated with this Manga on Kitsu.
+    slug: :class:`str`
+        The unique string identifier for this Manga.
+    synopsis: :class:`str`
+        The synopsis/description of this Manga.
+    description: :class:`str`
+        Alias to synopsis.
+    canonical_title: :class:`str`
+        The canonical title of this Manga.
+    abbreviated_titles: List[:class:`str`]
+        A list of abbreviated titles for this Manga.
+    average_rating: :class:`float`
+        The average rating of this Manga out of 100 on Kitsu.
+    rating_frequencies: Dict[:class:`str`, :class:`str`]
+        A mapping of ratings to its frequencies for this Manga.
+    user_count: :class:`int`
+        The number of users associated with this Manga on Kitsu.
+    favorites_count: :class:`int`
+        The number of users who have added this Manga to their favorites.
+    popularity_rank: :class:`int`
+        The popularity rank of this Manga on Kitsu.
+    rating_rank: :class:`int`
+        The rating rank of this Manga on Kitsu.
     age_rating: Optional[Literal["G", "PG", "R", "R18"]]
-        The age rating for the Anime
-    age_rating_guide: Optional[str]
-        Elaborated age rating for the Anime
-    status: Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]]
-        The status of the anime
-    tba: Optional[str]
-    subtype: Optional[Literal["ONA", "OVA", "TV", "movie", "music", "special"]]
-        The subtype of the Anime
-    youtube_video_id: Optional[str]
-        The youtube video ID associated with the Anime
-    nsfw: Optional[bool]
-        If the Anime is NSFW(Not safe for work/18+)
+        The age rating of this Manga.
+    age_rating_guide: Optional[:class:`str`]
+        A string describing the age rating of this Manga.
+    subtype: Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]
+        The subtype of this Manga.
+    status: Literal["current", "finished", "tba", "unreleased", "upcoming"]
+        The status of this Manga.
+    chapter_count: :class:`int`
+        The number of chapters in the Manga.
+    volume_count: :class:`int`
+        The number of volumes of this Manga.
+    serialization: :class:`str`
+        The supporter/publisher of this Manga.
     """
 
-    __slots__ = ("subtype", "youtube_video_id", "nsfw")
+    __slots__ = (
+        "_data",
+        "_attributes",
+        "_client",
+        "id",
+        "slug",
+        "synopsis",
+        "description",
+        "_titles",
+        "canonical_title",
+        "abbreviated_titles",
+        "average_rating",
+        "rating_frequencies",
+        "user_count",
+        "favorites_count",
+        "popularity_rank",
+        "rating_rank",
+        "age_rating",
+        "age_rating_guide",
+        "subtype",
+        "status",
+        "chapter_count",
+        "volume_count",
+        "serialization",
+    )
 
-    def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
-        super().__init__(payload, session)
+    def __init__(self, payload: MangaData, client: Client) -> None:
+        self._data = payload
+        self._attributes = self._data["attributes"]
+        self._client = client
 
-        self.subtype: Optional[Literal["ONA", "OVA", "TV", "movie", "music", "special"]] = self._data["attributes"][
-            "subtype"
-        ]
-        self.youtube_video_id: Optional[str] = self._data["attributes"]["youtubeVideoId"]
-        self.nsfw: Optional[bool] = self._data["attributes"]["nsfw"]
+        self.id = int(self._data["id"])
+        self.slug = self._attributes["slug"]
+        self.synopsis = self._attributes["synopsis"]
+        self.description = self.synopsis
+        self._titles = self._attributes["titles"]
+        self.canonical_title = self._attributes["canonicalTitle"]
+        self.abbreviated_titles = self._attributes["abbreviatedTitles"]
+        self.average_rating = float(self._attributes["averageRating"])
+        self.rating_frequencies = self._attributes["ratingFrequencies"]
+        self.user_count = self._attributes["userCount"]
+        self.favorites_count = self._attributes["favoritesCount"]
+        self.popularity_rank = self._attributes["popularityRank"]
+        self.rating_rank = self._attributes["ratingRank"]
+        self.age_rating = self._attributes["ageRating"]
+        self.age_rating_guide = self._attributes["ageRatingGuide"]
+        self.subtype = self._attributes["subtype"]
+        self.status = self._attributes["status"]
+        self.chapter_count = self._attributes["chapterCount"]
+        self.volume_count = self._attributes["volumeCount"]
+        self.serialization = self._attributes["serialization"]
 
-    async def _fetch_streaming_links(self) -> Optional[List[StreamingLink]]:
-        async with self._session.get(
-            url=f"https://kitsu.io/api/edge/anime/{self.id}/streaming-links", headers=HEADERS
-        ) as response:
-            if response.status == 200:
-                _raw_data = await response.json()
-            else:
-                return None
+    def __repr__(self) -> str:
+        return f"<kitsu.Manga id={self.id}> title={self.title}"
 
-        return [StreamingLink(data) for data in _raw_data["data"]]
-
-    async def _fetch_episodes(self) -> Optional[List[Episode]]:
-        async with self._session.get(url=f"https://kitsu.io/api/edge/anime/{self.id}/episodes", headers=HEADERS) as response:
-            if response.status == 200:
-                _raw_data = await response.json()
-            else:
-                return None
-
-        return [Episode(data) for data in _raw_data["data"]]
+    def __str__(self) -> str:
+        return self.title
 
     @property
-    async def streaming_links(self) -> Optional[List[StreamingLink]]:
-        """
-        The streaming links & information for the Anime
+    def url(self) -> str:
+        """The Kitsu URL to this Manga.
 
         Returns
         -------
-        Optional[List[:class:`StreamingLink`]]
+        :class:`str`
         """
-        return await self._fetch_streaming_links()
+        return f"https://kitsu.io/manga/{self.slug}"
 
     @property
-    async def episodes(self) -> Optional[List[Episode]]:
-        """
-        The episodes of the Anime
+    def title(self) -> str:
+        """The title of this Manga.
 
         Returns
         -------
-        Optional[List[:class:`Episode`]]
+        :class:`str`
+            The title of the Manga, defaults to ``en`` language key in the
+            titles mapping, fall backs to the next available key if the ``en``
+            key is not present.
         """
-        return await self._fetch_episodes()
+        return self._titles.get("en", (list(self._titles.values())[0]))
 
     @property
-    def episode_count(self) -> Optional[int]:
-        """
-        The number of episodes of this Anime
+    def created_at(self) -> datetime:
+        """The UTC datetime of when this Manga was created on Kitsu.
 
         Returns
         -------
-        Optional[int]
+        :class:`datetime`
         """
-        try:
-            return int(self._data["attributes"]["episodeCount"])
-        except (KeyError, TypeError):
-            return None
+        return datetime.fromisoformat(self._attributes["createdAt"])
 
     @property
-    def episode_length(self) -> Optional[int]:
-        """
-        The avg length of episodes of this Anime in minutes
+    def updated_at(self) -> Optional[datetime]:
+        """The UTC datetime of when this Manga was last updated on Kitsu.
 
         Returns
         -------
-        Optional[int]
+        :class:`datetime`
         """
-        try:
-            return int(self._data["attributes"]["episodeLength"])
-        except (KeyError, TypeError):
-            return None
-
-
-class Manga(Media):
-    """The information about a Manga wrapped in a class
-
-    Attributes
-    ----------
-    id: str
-        The UUID of the Manga on Kitsu
-    slug: str
-        The name of the Manga with hyphens, It's recommended to use title or canoncial_title instead.
-        Example: `shingeki-no-kyojin`
-    canonical_title: str
-        The canonical title of the Manga
-    synopsis: str
-        The Synopsis/Description of the Manga
-    abbreviated_titles: Optional[List[str]]
-        A list of abbreivated titles for the Manga
-    rating_frequencies: Optional[Dict[str, str]]
-        The rating fequencies of the Manga
-    age_rating: Optional[Literal["G", "PG", "R", "R18"]]
-        The age rating for the Manga
-    age_rating_guide: Optional[str]
-        Elaborated age rating for the Manga
-    status: Optional[Literal["current", "finished", "tba", "unreleased", "upcoming"]]
-        The status of the Manga
-    subtype: Optional[Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]]
-        The subtype of the Manga
-    serialization: Optional[str]
-    """
-
-    __slots__ = ("subtype", "serialization")
-
-    def __init__(self, payload: dict, session: aiohttp.ClientSession) -> None:
-        super().__init__(payload, session)
-
-        self.subtype: Optional[Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]] = self._data[
-            "attributes"
-        ]["subtype"]
-        self.serialization: Optional[str] = self._data["attributes"]["serialization"]
+        return datetime.fromisoformat(self._attributes["updatedAt"])
 
     @property
-    def chapter_count(self) -> Optional[int]:
-        """
-        The number of chapters in this Manga
+    def start_date(self) -> datetime:
+        """The UTC datetime of when this Manga started.
 
         Returns
         -------
-        Optional[int]
+        :class:`datetime`
         """
-        try:
-            return int(self._data["attributes"]["chapterCount"])
-        except (KeyError, TypeError):
-            return None
+        return datetime.strptime(self._attributes["startDate"], "%Y-%m-%d")
 
     @property
-    def volume_count(self) -> Optional[int]:
-        """
-        The number of volumes of this Manga
+    def end_date(self) -> Optional[datetime]:
+        """The UTC datetime of when this Manga ended, if it has.
 
         Returns
         -------
-        Optional[int]
+        Optional[:class:`datetime`]
         """
-        try:
-            return int(self._data["attributes"]["volumeCount"])
-        except (KeyError, TypeError):
-            return None
+        if (payload := self._attributes["endDate"]) is not None:
+            return datetime.strptime(payload, "%Y-%m-%d")
+
+    @property
+    def poster_image(self) -> Optional[Image]:
+        """The poster image of this Manga.
+
+        Returns
+        -------
+        :class:`Image`
+        """
+        if (payload := self._attributes["posterImage"]) is not None:
+            return Image(payload)
+
+    @property
+    def cover_image(self) -> Optional[Image]:
+        """The cover image of this Manga.
+
+        Returns
+        -------
+        :class:`Image`
+        """
+        if (payload := self._attributes["coverImage"]) is not None:
+            return Image(payload)
