@@ -1,6 +1,6 @@
 [tool.poetry]
 name        = "kitsu.py"
-version     = "1.1.2"
+version     = "1.2.0"
 description = "A Simple & Lightweight Asynchronous Python Wrapper for Kitsu's Manga & Anime API."
 authors     = ["MrArkon <mrarkon@outlook.com>"]
 maintainers = ["MrArkon <mrarkon@outlook.com>"]
