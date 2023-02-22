@@ -23,34 +23,45 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Optional
-
 from aiohttp import ClientResponse
 
 
 class HTTPException(Exception):
-    """Generic API exception when the response code is a non 2xx error."""
+    """Generic API exception when the response code is a not 2xx.
 
-    def __init__(self, response: ClientResponse, message: str, response_code: int) -> None:
+    Attributes
+    ----------
+    response: :class:`ClientResponse`
+        The raw response from the request.
+    message: :class:`str`
+        The error message sent by the API.
+    status: :class:`int`
+        The HTTP status code of the response.
+    """
+
+    def __init__(self, response: ClientResponse, message: str, status: int) -> None:
         self.response: ClientResponse = response
         self.message: str = message
-        self.response_code: Optional[int] = response_code
-        super().__init__(self.response, self.message, self.response_code)
+        self.status: int = status
+
+        super().__init__(f"{self.status} {self.message}")
 
 
 class BadRequest(HTTPException):
-    """An exception for when the API query is malformed."""
+    """Raised when the API query is malformed."""
 
     def __init__(self, response: ClientResponse, message: str) -> None:
         self.response: ClientResponse = response
         self.message: str = message
+
         super().__init__(response, message, 400)
 
 
 class NotFound(HTTPException):
-    """An exception for when the requested API item was not found."""
+    """Raised when the requested API item was not found."""
 
     def __init__(self, response: ClientResponse, message: str) -> None:
         self.response: ClientResponse = response
         self.message: str = message
+
         super().__init__(response, message, 404)

@@ -23,41 +23,45 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-import logging
 from typing import Any, List, Optional
 
 import aiohttp
 
+from . import __version__
 from .errors import BadRequest, HTTPException, NotFound
 from .models import Anime, Manga
 
 __all__ = ("Client",)
-__log__: logging.Logger = logging.getLogger(__name__)
 
 BASE = "https://kitsu.io/api/edge"
 
 
 class Client:
-    """User client used to interact with the Kitsu API"""
+    """Represents the client used to interface with the Kitsu API.
+
+    Parameters
+    ----------
+    session: Optional[:class:`aiohttp.ClientSession`]
+        The aiohttp client session to use for performing requests to the Kitsu API.
+    """
+
+    __slots__ = ("_session",)
 
     def __init__(self, session: Optional[aiohttp.ClientSession] = None) -> None:
-        self._session: aiohttp.ClientSession = session or aiohttp.ClientSession()
+        self._session = session or aiohttp.ClientSession()
 
     def __repr__(self) -> str:
         return "<kitsu.Client>"
 
-    async def _get(self, url: str, **kwargs: Any) -> Any:
-        """Performs a GET request to the Kitsu API"""
-
+    async def _get(self, url: str, **kwargs: Any) -> dict[str, Any]:
+        """Internal function used to perform requests the the Kitsu API."""
         headers = kwargs.pop("headers", {})
 
         headers["Accept"] = "application/vnd.api+json"
         headers["Content-Type"] = "application/vnd.api+json"
-        headers["User-Agent"] = "Kitsu.py (https://github.com/MrArkon/kitsu.py)"
-        kwargs["headers"] = headers
+        headers["User-Agent"] = f"Kitsu.py/{__version__} (https://github.com/MrArkon/kitsu.py)"
 
-        __log__.debug("Request Headers: %s", headers)
-        __log__.debug("Request URL: %s", url)
+        kwargs["headers"] = headers
 
         async with self._session.get(url=url, **kwargs) as response:
             data = await response.json()
@@ -80,12 +84,12 @@ class Client:
 
     async def get_anime(self, anime_id: int) -> Anime:
         """
-        Fetch the information of an anime using its ID
+        Fetches an Anime fom the Kitsu API.
 
         Parameters
         ----------
         anime_id: int
-            The ID of the Anime on kitsu.io
+            The UUID of the anime on Kitsu.
 
         Returns
         -------
@@ -96,14 +100,14 @@ class Client:
 
     async def search_anime(self, query: str = "", limit: int = 1, **filters) -> List[Anime]:
         """
-        Search for an Anime with its name or filters
+        Searches for Animes from the Kitsu API.
 
         Parameters
         ----------
         query: str, default: ""
             The query you want to search with
         limit: int, default: 1
-            Limits the number of animes returned
+            The limit of Animes returned from this request.
         **filters: dict, optional
             The possible filters are: season, season_year, streamers & age_rating
 
@@ -123,7 +127,7 @@ class Client:
 
     async def trending_anime(self) -> List[Anime]:
         """
-        Fetch trending animes
+        Fetches the top 10 trending Animes on Kitsu.
 
         Returns
         -------
@@ -134,30 +138,30 @@ class Client:
 
     async def get_manga(self, manga_id: int) -> Manga:
         """
-        Fetch the information of a manga using its ID
+        Fetches a Manga fom the Kitsu API.
 
         Parameters
         ----------
         manga_id: int
-            The ID of the manga on kitsu.io
+            The UUID of the manga on Kitsu.
 
         Returns
         -------
-        :class:`Anime`
+        :class:`Manga`
         """
         data = await self._get(url=f"{BASE}/manga/{manga_id}")
         return Manga(data["data"], self._session)
 
     async def search_manga(self, query: str = "", limit: int = 1, **filters) -> List[Manga]:
         """
-        Search for a Manga with its Name or Filters
+        Searches for Mangas from the Kitsu API.
 
         Parameters
         ----------
         query: str, default: ""
-            The query you want to search with
+            The query you want to search with.
         limit: int, default: 1
-            Limits the number of mangas returned
+            The limit of Mangas returned from this request.
         **filters: dict, optional
             The possible filters are: season, season_year, streamers & age_rating
 
@@ -178,15 +182,15 @@ class Client:
 
     async def trending_manga(self) -> List[Manga]:
         """
-        Fetch trending Mangas
+        Fetches the top 10 trending Mangas on Kitsu.
 
         Returns
         -------
-        List[:class:`Manga`]
+        List[:class:`Mangas`]
         """
         data = await self._get(f"{BASE}/trending/manga")
         return [Manga(payload, self._session) for payload in data["data"]]
 
     async def close(self) -> None:
-        """Closes the internal HTTP session"""
+        """Closes the internal ClientSession."""
         return await self._session.close()
