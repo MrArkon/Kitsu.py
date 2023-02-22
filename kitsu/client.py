@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, List, Optional
+from typing import TYPE_CHECKING, Any, List, Optional
 
 import aiohttp
 
@@ -31,9 +31,17 @@ from . import __version__
 from .errors import BadRequest, HTTPException, NotFound
 from .models import Anime, Manga
 
+if TYPE_CHECKING:
+    from .types import AnimeCollection, AnimeResource, MangaCollection, MangaResource
+
 __all__ = ("Client",)
 
 BASE = "https://kitsu.io/api/edge"
+HEADERS = {
+    "Accept": "application/vnd.api+json",
+    "Content-Type": "application/vnd.api+json",
+    "User-Agent": f"Kitsu.py/{__version__} (https://github.com/MrArkon/kitsu.py)",
+}
 
 
 class Client:
@@ -53,17 +61,11 @@ class Client:
     def __repr__(self) -> str:
         return "<kitsu.Client>"
 
-    async def _get(self, url: str, **kwargs: Any) -> dict[str, Any]:
-        """Internal function used to perform requests the the Kitsu API."""
-        headers = kwargs.pop("headers", {})
+    async def _request(self, path: str, method: str = "GET", **kwargs: Any) -> Any:
+        """Internal function used to perform requests to the Kitsu API."""
+        kwargs["headers"] = HEADERS
 
-        headers["Accept"] = "application/vnd.api+json"
-        headers["Content-Type"] = "application/vnd.api+json"
-        headers["User-Agent"] = f"Kitsu.py/{__version__} (https://github.com/MrArkon/kitsu.py)"
-
-        kwargs["headers"] = headers
-
-        async with self._session.get(url=url, **kwargs) as response:
+        async with self._session.request(method=method, url=f"{BASE}/{path}", **kwargs) as response:
             data = await response.json()
 
             if response.status == 200:
@@ -71,10 +73,10 @@ class Client:
 
             if response.status == 400:
                 raise BadRequest(response, data["errors"][0]["detail"])
-            if response.status == 404:
+            elif response.status == 404:
                 raise NotFound(response, data["errors"][0]["detail"])
-
-            raise HTTPException(response, await response.text(), response.status)
+            else:
+                raise HTTPException(response, await response.text(), response.status)
 
     async def _insert_filters(self, filters: dict, params: dict) -> None:
         # Credit to @Dymattic for this piece of code.
@@ -89,14 +91,14 @@ class Client:
         Parameters
         ----------
         anime_id: int
-            The UUID of the anime on Kitsu.
+            The UUID of the Anime on Kitsu.
 
         Returns
         -------
         :class:`Anime`
         """
-        data = await self._get(url=f"{BASE}/anime/{anime_id}")
-        return Anime(data["data"], self._session)
+        data: AnimeResource = await self._request(f"anime/{anime_id}")
+        return Anime(data["data"], self)
 
     async def search_anime(self, query: str = "", limit: int = 1, **filters) -> List[Anime]:
         """
@@ -117,13 +119,13 @@ class Client:
         """
         params = {"page[limit]": str(limit)}
 
-        if query != "":
+        if query:
             params["filter[text]"] = query
 
         await self._insert_filters(filters, params)
 
-        data = await self._get(url=f"{BASE}/anime", params=params)
-        return [Anime(payload, self._session) for payload in data["data"]]
+        data: AnimeCollection = await self._request("anime", params=params)
+        return [Anime(payload, self) for payload in data["data"]]
 
     async def trending_anime(self) -> List[Anime]:
         """
@@ -133,8 +135,8 @@ class Client:
         -------
         List[:class:`Anime`]
         """
-        data = await self._get(f"{BASE}/trending/anime")
-        return [Anime(payload, self._session) for payload in data["data"]]
+        data = await self._request(f"trending/anime")
+        return [Anime(payload, self) for payload in data["data"]]
 
     async def get_manga(self, manga_id: int) -> Manga:
         """
@@ -143,14 +145,14 @@ class Client:
         Parameters
         ----------
         manga_id: int
-            The UUID of the manga on Kitsu.
+            The UUID of the Manga on Kitsu.
 
         Returns
         -------
         :class:`Manga`
         """
-        data = await self._get(url=f"{BASE}/manga/{manga_id}")
-        return Manga(data["data"], self._session)
+        data: MangaResource = await self._request(f"manga/{manga_id}")
+        return Manga(data["data"], self)
 
     async def search_manga(self, query: str = "", limit: int = 1, **filters) -> List[Manga]:
         """
@@ -176,9 +178,9 @@ class Client:
 
         await self._insert_filters(filters, params)
 
-        data = await self._get(url=f"{BASE}/manga", params=params)
+        data: MangaCollection = await self._request("manga", params=params)
 
-        return [Manga(payload, self._session) for payload in data["data"]]
+        return [Manga(payload, self) for payload in data["data"]]
 
     async def trending_manga(self) -> List[Manga]:
         """
@@ -186,10 +188,10 @@ class Client:
 
         Returns
         -------
-        List[:class:`Mangas`]
+        List[:class:`Manga`]
         """
-        data = await self._get(f"{BASE}/trending/manga")
-        return [Manga(payload, self._session) for payload in data["data"]]
+        data = await self._request("trending/manga")
+        return [Manga(payload, self) for payload in data["data"]]
 
     async def close(self) -> None:
         """Closes the internal ClientSession."""
