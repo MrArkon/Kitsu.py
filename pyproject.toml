@@ -46,16 +46,25 @@ myst-parser = "^0.17.2"
 sphinx-inline-tabs = "^2022.1.2-beta.11"
 sphinx-copybutton = "^0.5.0"
 
+[build-system]
+requires      = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.black]
 line-length = 125
-target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+combine_star = true
+star_first = true
+include_trailing_comma = true
+dedup_headings = true
+known_first_party = "poetry"
 
 [tool.pyright]
 include = ["kitsu"]
 useLibraryCodeForTypes = true
 pythonVersion = "3.10"
 reportOptionalMemberAccess = false
-
-[build-system]
-requires      = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
