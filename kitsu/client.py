@@ -32,14 +32,7 @@ from .errors import BadRequest, HTTPException, NotFound
 from .models import Anime, Episode, Manga
 
 if TYPE_CHECKING:
-    from .types import (
-        AnimeCollection,
-        AnimeResource,
-        EpisodeCollection,
-        EpisodeResource,
-        MangaCollection,
-        MangaResource,
-    )
+    from .types import AnimeCollection, AnimeResource, EpisodeData, MangaCollection, MangaResource
 
 __all__ = ("Client",)
 
@@ -87,7 +80,7 @@ class Client:
             else:
                 raise HTTPException(response, await response.text(), response.status)
 
-    async def get_anime(self, anime_id: int) -> Anime:
+    async def get_anime(self, anime_id: int, *, includes: Optional[List[Literal["episodes"]]] = None) -> Anime:
         """
         Fetches an Anime fom the Kitsu API.
 
@@ -95,13 +88,20 @@ class Client:
         ----------
         anime_id: :class:`int`
             The UUID of the Anime on Kitsu.
+        includes: List[Literal["episodes"]]
+            The list of options to include extra information with the Anime.
 
         Returns
         -------
         :class:`Anime`
         """
-        data: AnimeResource = await self._request(f"anime/{anime_id}")
-        return Anime(data["data"], self)
+        params = {}
+
+        if includes:
+            params["include"] = ",".join(includes)
+
+        data: AnimeResource = await self._request(f"anime/{anime_id}", params=params)
+        return Anime(data["data"], self, included=data.get("included"))
 
     async def search_anime(
         self,
