@@ -61,11 +61,13 @@ class Client:
     def __repr__(self) -> str:
         return "<kitsu.Client>"
 
-    async def _request(self, path: str, method: str = "GET", **kwargs: Any) -> Any:
+    async def _request(self, path: str = "", method: str = "GET", **kwargs: Any) -> Any:
         """Internal function used to perform requests to the Kitsu API."""
         kwargs["headers"] = HEADERS
 
-        async with self._session.request(method=method, url=f"{BASE}/{path}", **kwargs) as response:
+        url = kwargs.pop("url", f"{BASE}/{path}")
+
+        async with self._session.request(method=method, url=url, **kwargs) as response:
             data = await response.json()
 
             if response.status == 200:
@@ -135,7 +137,7 @@ class Client:
         -------
         List[:class:`Anime`]
         """
-        data = await self._request(f"trending/anime")
+        data = await self._request("trending/anime")
         return [Anime(payload, self) for payload in data["data"]]
 
     async def get_manga(self, manga_id: int) -> Manga:
