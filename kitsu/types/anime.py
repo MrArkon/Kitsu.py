@@ -21,9 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Dict, List, Literal, TypedDict
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Dict, List, Literal, TypedDict
 
 from .common import CollectionLinks, CollectionMeta, Links, MediaAttributes, Relationship
+
+if TYPE_CHECKING:
+    from typing_extensions import NotRequired
 
 __all__ = ("AnimeCollection", "AnimeData", "AnimeResource", "EpisodeData", "EpisodeResource", "EpisodeCollection")
 
@@ -65,10 +70,12 @@ class AnimeData(TypedDict):
 
 class AnimeResource(TypedDict):
     data: AnimeData
+    included: NotRequired[List[EpisodeData]]
 
 
 class AnimeCollection(TypedDict):
     data: List[AnimeData]
+    included: NotRequired[List[EpisodeData]]
     meta: CollectionMeta
     links: CollectionLinks
 
