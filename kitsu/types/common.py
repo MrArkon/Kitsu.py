@@ -37,7 +37,7 @@ class MediaAttributes(TypedDict):
     titles: Dict[str, str]
     canonicalTitle: str
     abbreviatedTitles: List[str]
-    averageRating: str
+    averageRating: Optional[str]
     ratingFrequencies: Dict[str, str]
     userCount: int
     favoritesCount: int

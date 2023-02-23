@@ -192,7 +192,7 @@ class Anime:
         The canonical title of this Anime.
     abbreviated_titles: List[:class:`str`]
         A list of abbreviated titles for this Anime.
-    average_rating: :class:`float`
+    average_rating: Optional[:class:`float`]
         The average rating of this Anime out of 100 on Kitsu.
     rating_frequencies: Dict[:class:`str`, :class:`str`]
         A mapping of ratings to its frequencies for this Anime.
@@ -262,7 +262,7 @@ class Anime:
         self._titles = self._attributes["titles"]
         self.canonical_title = self._attributes["canonicalTitle"]
         self.abbreviated_titles = self._attributes["abbreviatedTitles"]
-        self.average_rating = float(self._attributes["averageRating"])
+        self.average_rating = None if self._attributes["averageRating"] is None else float(self._attributes["averageRating"])
         self.rating_frequencies = self._attributes["ratingFrequencies"]
         self.user_count = self._attributes["userCount"]
         self.favorites_count = self._attributes["favoritesCount"]
@@ -415,7 +415,7 @@ class Manga:
         The canonical title of this Manga.
     abbreviated_titles: List[:class:`str`]
         A list of abbreviated titles for this Manga.
-    average_rating: :class:`float`
+    average_rating: Optional[:class:`float`]
         The average rating of this Manga out of 100 on Kitsu.
     rating_frequencies: Dict[:class:`str`, :class:`str`]
         A mapping of ratings to its frequencies for this Manga.
@@ -481,7 +481,7 @@ class Manga:
         self._titles = self._attributes["titles"]
         self.canonical_title = self._attributes["canonicalTitle"]
         self.abbreviated_titles = self._attributes["abbreviatedTitles"]
-        self.average_rating = float(self._attributes["averageRating"])
+        self.average_rating = None if self._attributes["averageRating"] is None else float(self._attributes["averageRating"])
         self.rating_frequencies = self._attributes["ratingFrequencies"]
         self.user_count = self._attributes["userCount"]
         self.favorites_count = self._attributes["favoritesCount"]
