@@ -29,10 +29,17 @@ import aiohttp
 
 from . import __version__
 from .errors import BadRequest, HTTPException, NotFound
-from .models import Anime, Manga
+from .models import Anime, Episode, Manga
 
 if TYPE_CHECKING:
-    from .types import AnimeCollection, AnimeResource, MangaCollection, MangaResource
+    from .types import (
+        AnimeCollection,
+        AnimeResource,
+        EpisodeCollection,
+        EpisodeResource,
+        MangaCollection,
+        MangaResource,
+    )
 
 __all__ = ("Client",)
 
@@ -92,7 +99,7 @@ class Client:
 
         Parameters
         ----------
-        anime_id: int
+        anime_id: :class:`int`
             The UUID of the Anime on Kitsu.
 
         Returns
@@ -108,10 +115,11 @@ class Client:
 
         Parameters
         ----------
-        query: str, default: ""
+        query: :class:`str`, default: ""
             The query you want to search with
-        limit: int, default: 1
-            The limit of Animes returned from this request.
+        limit: :class:`int`, default: 1
+            The limit of Animes returned from this request, it is clamped
+            at 20 as that is the maximum supported by the API.
         **filters: dict, optional
             The possible filters are: season, season_year, streamers & age_rating
 
@@ -119,7 +127,7 @@ class Client:
         -------
         List[:class:`Anime`]
         """
-        params = {"page[limit]": str(limit)}
+        params = {"page[limit]": str(max(min(limit, 20), 1))} # Restrict limit to 1 to 20
 
         if query:
             params["filter[text]"] = query
@@ -146,7 +154,7 @@ class Client:
 
         Parameters
         ----------
-        manga_id: int
+        manga_id: :class:`int`
             The UUID of the Manga on Kitsu.
 
         Returns
@@ -162,10 +170,11 @@ class Client:
 
         Parameters
         ----------
-        query: str, default: ""
+        query: :class:`str`, default: ""
             The query you want to search with.
-        limit: int, default: 1
-            The limit of Mangas returned from this request.
+        limit: :class:`int`, default: 1
+            The limit of Mangas returned from this request, it is clamped
+            at 20 as that is the maximum supported by the API.
         **filters: dict, optional
             The possible filters are: season, season_year, streamers & age_rating
 
@@ -173,7 +182,7 @@ class Client:
         -------
         List[:class:`Manga`]
         """
-        params = {"page[limit]": str(limit)}
+        params = {"page[limit]": str(max(min(limit, 20), 1))} # Restrict limit to 1 to 20
 
         if query != "":
             params["filter[text]"] = query
