@@ -33,16 +33,14 @@ aiohttp = "^3.7.4"
 "Bug Tracker" = "https://github.com/MrArkon/kitsu.py/issues"
 "Changelog" = "https://github.com/MrArkon/kitsu.py/blob/master/CHANGELOG.md"
 
-[tool.poetry.dev-dependencies]
-# Formatting Tools
+[tool.poetry.group.lint.dependencies]
 black = "^23.1.0"
 isort = "^5.12.0"
 
-# Documentation
-Sphinx = "^4.5.0"
-furo = "^2022.4.7"
+[tool.poetry.group.docs.dependencies]
+Sphinx = "^6.1.3"
+furo = "^2022.12.7"
 tomli = "^2.0.1"
-myst-parser = "^0.17.2"
 sphinx-inline-tabs = "^2022.1.2-beta.11"
 sphinx-copybutton = "^0.5.0"
 

@@ -1,5 +1,0 @@
-Sphinx==4.5.0
-furo==2022.4.7
-tomli==2.0.1
-myst-parser==0.17.2
-sphinx-inline-tabs==2022.1.2-beta.11
