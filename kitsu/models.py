@@ -226,6 +226,7 @@ class Anime:
         "_data",
         "_attributes",
         "_client",
+        "_included",
         "id",
         "slug",
         "synopsis",
@@ -250,10 +251,11 @@ class Anime:
         "__episodes",
     )
 
-    def __init__(self, payload: AnimeData, client: Client) -> None:
+    def __init__(self, payload: AnimeData, client: Client, *, included: Optional[List[EpisodeData]] = None) -> None:
         self._data = payload
         self._attributes = self._data["attributes"]
         self._client = client
+        self._included = included
 
         self.id = int(self._data["id"])
         self.slug = self._attributes["slug"]
@@ -371,6 +373,32 @@ class Anime:
         if (payload := self._attributes["coverImage"]) is not None:
             return Image(payload)
 
+    @property
+    def episodes(self) -> Optional[List[Episode]]:
+        """The episodes for this Anime.
+
+        Returns
+        -------
+        Optional[List[:class:`Episode`]]
+        """
+
+        if self.__episodes:
+            if not self._included:
+                return None
+
+            episodes = [Episode(data) for data in self._included if data["type"] == "episodes"]
+
+            if not episodes:
+                return None
+
+            self.__episodes = episodes
+
+        return self.__episodes
+
+    @episodes.setter
+    def episodes(self, value: List[Episode]) -> None:
+        self.__episodes = [item for item in value if isinstance(item, Episode)]
+
     async def get_episodes(self) -> Optional[List[Episode]]:
         """Fetches the episodes for this Anime and caches the response.
 
@@ -378,7 +406,7 @@ class Anime:
         -------
         Optional[List[:class:`Episode`]]
         """
-        if self.__episodes is None:
+        if self.episodes is None:
             data: EpisodeCollection = await self._client._request(f"anime/{self.id}/episodes", params={"page[limit]": 20})
             episodes = [Episode(payload) for payload in data["data"]]
 
@@ -393,9 +421,9 @@ class Anime:
             if not episodes:
                 return None
 
-            self.__episodes = episodes
+            self.episodes = episodes
 
-        return self.__episodes
+        return self.episodes
 
 
 class Manga:
