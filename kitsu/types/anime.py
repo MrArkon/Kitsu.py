@@ -21,9 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import List, Literal, TypedDict
+from typing import Dict, List, Literal, TypedDict
 
 from .common import CollectionLinks, CollectionMeta, Links, MediaAttributes, Relationship
+
+__all__ = ("AnimeCollection", "AnimeData", "AnimeResource", "EpisodeData", "EpisodeResource", "EpisodeCollection")
 
 
 class AnimeAttributes(MediaAttributes, TypedDict):
@@ -67,5 +69,45 @@ class AnimeResource(TypedDict):
 
 class AnimeCollection(TypedDict):
     data: List[AnimeData]
+    meta: CollectionMeta
+    links: CollectionLinks
+
+
+class EpisodeThumbnail(TypedDict):
+    original: str
+
+
+class EpisodeAttributes(TypedDict):
+    createdAt: str
+    updatedAt: str
+    synopsis: str
+    titles: Dict[str, str]
+    canonicalTitle: str
+    seasonNumber: int
+    number: int
+    relativeNumber: int
+    airdate: str
+    length: int
+    thumbnail: EpisodeThumbnail | None
+
+
+class EpisodeRelationships:
+    media: Relationship
+    videos: Relationship
+
+
+class EpisodeData(TypedDict):
+    id: str
+    type: Literal["episodes"]
+    links: Links
+    attributes: EpisodeAttributes
+
+
+class EpisodeResource(TypedDict):
+    data: EpisodeData
+
+
+class EpisodeCollection(TypedDict):
+    data: List[EpisodeData]
     meta: CollectionMeta
     links: CollectionLinks

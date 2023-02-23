@@ -25,6 +25,8 @@ from typing import List, Literal, TypedDict
 
 from .common import CollectionLinks, CollectionMeta, Links, MediaAttributes, Relationship
 
+__all__ = ("MangaCollection", "MangaData", "MangaResource")
+
 
 class MangaAttributes(MediaAttributes, TypedDict):
     subtype: Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]
