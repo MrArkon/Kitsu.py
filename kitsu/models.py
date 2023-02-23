@@ -24,11 +24,11 @@ SOFTWARE.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from .client import Client
-    from .types import AnimeData
+    from .types import AnimeData, EpisodeCollection, EpisodeData
     from .types import Image as ImagePayload
     from .types import MangaData
 
@@ -61,6 +61,118 @@ class Image:
         self.medium = self._data["medium"]
         self.large = self._data["large"]
         self.original = self._data["original"]
+
+
+class Episode:
+    """Represents an Episode returned from the Kitsu API.
+
+    Attributes
+    ----------
+    id: :class:`int`
+        The UUID associated with the Episode on Kitsu.
+    synopsis: :class:`str`
+        The synopsis/description of this Episode.
+    description: :class:`str`
+        Alias to synopsis.
+    canonical_title: :class:`str`
+        The canonical title of this Episode.
+    season_number: :class:`int`
+        The season number in which this Episode appears.
+    number: :class:`int`
+        The Episode number.
+    relative_number :class:`int`
+        The relative Episode number.
+    length: :class:`int`
+        The length of this Episode in minutes.
+    """
+
+    __slots__ = (
+        "_data",
+        "_attributes",
+        "id",
+        "synopsis",
+        "description",
+        "_titles",
+        "canonical_title",
+        "season_number",
+        "number",
+        "relative_number",
+        "length",
+    )
+
+    def __init__(self, payload: EpisodeData) -> None:
+        self._data = payload
+        self._attributes = payload["attributes"]
+
+        self.id = int(self._data["id"])
+        self.synopsis = self._attributes["synopsis"]
+        self.description = self.synopsis
+        self._titles = self._attributes["titles"]
+        self.canonical_title = self._attributes["canonicalTitle"]
+        self.season_number = self._attributes["seasonNumber"]
+        self.number = self._attributes["number"]
+        self.relative_number = self._attributes["relativeNumber"]
+        self.length = self._attributes["length"]
+
+    def __repr__(self) -> str:
+        return f"<kitsu.Episode id={self.id} title={self.title}>"
+
+    def __str__(self) -> str:
+        return self.title
+
+    @property
+    def title(self) -> str:
+        """The title of this Episode.
+
+        Returns
+        -------
+        :class:`str`
+            The title of the Episode, defaults to ``en`` language key in the
+            titles mapping, fall backs to the next available key if the ``en``
+            key is not present.
+        """
+        return self._titles.get("en", (list(self._titles.values())[0]))
+
+    @property
+    def created_at(self) -> datetime:
+        """The UTC datetime of when this Episode was created.
+
+        Returns
+        -------
+        :class:`datetime`
+        """
+        return datetime.strptime(self._attributes["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
+
+    @property
+    def updated_at(self) -> Optional[datetime]:
+        """The UTC datetime of when this Episode was last updated.
+
+        Returns
+        -------
+        :class:`datetime`
+        """
+        return datetime.strptime(self._attributes["updatedAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
+
+    @property
+    def airdate(self) -> datetime:
+        """The UTC datetime of when this Episode aired.
+
+        Returns
+        -------
+        :class:`datetime`
+        """
+        return datetime.strptime(self._attributes["airdate"], "%Y-%m-%d")
+
+    @property
+    def thumbnail(self) -> Optional[str]:
+        """The URL to the thumbnail of this Episode.
+
+        Returns
+        -------
+        Optional[:class:`str`]
+        """
+        if (thumbnail := self._attributes["thumbnail"]) is not None:
+            return thumbnail["original"]
 
 
 class Anime:
@@ -135,6 +247,7 @@ class Anime:
         "episode_length",
         "youtube_video_id",
         "nsfw",
+        "__episodes",
     )
 
     def __init__(self, payload: AnimeData, client: Client) -> None:
@@ -164,8 +277,10 @@ class Anime:
         self.youtube_video_id = self._attributes["youtubeVideoId"]
         self.nsfw = self._attributes["nsfw"]
 
+        self.__episodes: Optional[List[Episode]] = None
+
     def __repr__(self) -> str:
-        return f"<kitsu.Anime id={self.id}> title={self.title}"
+        return f"<kitsu.Anime id={self.id} title={self.title}>"
 
     def __str__(self) -> str:
         return self.title
@@ -195,23 +310,23 @@ class Anime:
 
     @property
     def created_at(self) -> datetime:
-        """The UTC datetime of when this Anime was created on Kitsu.
+        """The UTC datetime of when this Anime was created.
 
         Returns
         -------
         :class:`datetime`
         """
-        return datetime.fromisoformat(self._attributes["createdAt"])
+        return datetime.strptime(self._attributes["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """The UTC datetime of when this Anime was last updated on Kitsu.
+        """The UTC datetime of when this Anime was last updated.
 
         Returns
         -------
         :class:`datetime`
         """
-        return datetime.fromisoformat(self._attributes["updatedAt"])
+        return datetime.strptime(self._attributes["updatedAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def start_date(self) -> datetime:
@@ -255,6 +370,32 @@ class Anime:
         """
         if (payload := self._attributes["coverImage"]) is not None:
             return Image(payload)
+
+    async def get_episodes(self) -> Optional[List[Episode]]:
+        """Fetches the episodes for this Anime and caches the response.
+
+        Returns
+        -------
+        Optional[List[:class:`Episode`]]
+        """
+        if self.__episodes is None:
+            data: EpisodeCollection = await self._client._request(f"anime/{self.id}/episodes", params={"page[limit]": 20})
+            episodes = [Episode(payload) for payload in data["data"]]
+
+            next_page_url = data["links"].get("next")
+
+            while next_page_url is not None:
+                next_page: EpisodeCollection = await self._client._request(url=next_page_url)
+                next_page_url = next_page["links"].get("next")
+
+                episodes.extend(Episode(payload) for payload in next_page["data"])
+
+            if not episodes:
+                return None
+
+            self.__episodes = episodes
+
+        return self.__episodes
 
 
 class Manga:
@@ -355,7 +496,7 @@ class Manga:
         self.serialization = self._attributes["serialization"]
 
     def __repr__(self) -> str:
-        return f"<kitsu.Manga id={self.id}> title={self.title}"
+        return f"<kitsu.Manga id={self.id} title={self.title}>"
 
     def __str__(self) -> str:
         return self.title
@@ -385,23 +526,23 @@ class Manga:
 
     @property
     def created_at(self) -> datetime:
-        """The UTC datetime of when this Manga was created on Kitsu.
+        """The UTC datetime of when this Manga was created.
 
         Returns
         -------
         :class:`datetime`
         """
-        return datetime.fromisoformat(self._attributes["createdAt"])
+        return datetime.strptime(self._attributes["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """The UTC datetime of when this Manga was last updated on Kitsu.
+        """The UTC datetime of when this Manga was last updated.
 
         Returns
         -------
         :class:`datetime`
         """
-        return datetime.fromisoformat(self._attributes["updatedAt"])
+        return datetime.strptime(self._attributes["updatedAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def start_date(self) -> datetime:
