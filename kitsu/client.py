@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, List, Optional
+from typing import TYPE_CHECKING, Any, List, Literal, Optional
 
 import aiohttp
 
@@ -87,12 +87,6 @@ class Client:
             else:
                 raise HTTPException(response, await response.text(), response.status)
 
-    async def _insert_filters(self, filters: dict, params: dict) -> None:
-        # Credit to @Dymattic for this piece of code.
-        for filter_name, filter_value in filters.items():
-            param_name = f"filter[{filter_name}]"
-            params[param_name] = filter_value
-
     async def get_anime(self, anime_id: int) -> Anime:
         """
         Fetches an Anime fom the Kitsu API.
@@ -109,30 +103,65 @@ class Client:
         data: AnimeResource = await self._request(f"anime/{anime_id}")
         return Anime(data["data"], self)
 
-    async def search_anime(self, query: str = "", limit: int = 1, **filters) -> List[Anime]:
+    async def search_anime(
+        self,
+        *,
+        limit=10,
+        text: Optional[str] = None,
+        after_year: Optional[int] = None,
+        before_year: Optional[int] = None,
+        season: Optional[List[Literal["spring", "summer", "fall", "winter"]]] = None,
+        age_rating: Optional[List[Literal["G", "PG", "R", "R18"]]] = None,
+        subtype: Optional[List[Literal["ONA", "OVA", "TV", "movie", "music", "special"]]] = None,
+        categories: Optional[List[str]] = None,
+    ) -> List[Anime]:
         """
         Searches for Animes from the Kitsu API.
 
         Parameters
         ----------
-        query: :class:`str`, default: ""
-            The query you want to search with
-        limit: :class:`int`, default: 1
+        limit: :class:`int`, default: 10
             The limit of Animes returned from this request, it is clamped
             at 20 as that is the maximum supported by the API.
-        **filters: dict, optional
-            The possible filters are: season, season_year, streamers & age_rating
+        text: Optional[:class:`str`]
+            The text to use for searching the Anime. This can be the
+            title, character, cast and etc.
+        after_year: Optional[:class:`int`]
+            The upper limit of the release year of the Anime to use for filtering the results.
+        before_year: Optional[:class:`int`]
+            The upper limit of the release year of the Anime to use for filtering the results.
+        season: Optional[List[Literal["spring", "summer", "fall", "winter"]]]
+            The release season(s) of the Anime to use for filtering the results.
+        age_rating: Optional[List[Literal["G", "PG", "R", "R18"]]]
+            The age rating(s) of the Anime to use for filtering the results.
+        subtype: Optional[List[Literal["ONA", "OVA", "TV", "movie", "music", "special"]]]
+            The subtype(s) of the Anime to use for filtering the results.
+        categories: Optional[List[:class:`str`]]
+            The categories of the Anime to use for filtering the results.
 
         Returns
         -------
         List[:class:`Anime`]
         """
-        params = {"page[limit]": str(max(min(limit, 20), 1))} # Restrict limit to 1 to 20
+        params: dict[str, Any] = {"page[limit]": str(max(min(limit, 20), 1))}  # Restrict limit to 1 to 20
 
-        if query:
-            params["filter[text]"] = query
+        if text is not None:
+            params["filter[text]"] = text
 
-        await self._insert_filters(filters, params)
+        if after_year is not None or before_year is not None:
+            params["filter[seasonYear]"] = f"{after_year or ''}..{before_year or ''}"
+
+        if season is not None:
+            params["filter[season]"] = ",".join(season)
+
+        if age_rating is not None:
+            params["filter[ageRating]"] = ",".join(age_rating)
+
+        if subtype is not None:
+            params["fiter[subtype]"] = ",".join(subtype)
+
+        if categories is not None:
+            params["filter[categories]"] = ",".join(categories)
 
         data: AnimeCollection = await self._request("anime", params=params)
         return [Anime(payload, self) for payload in data["data"]]
@@ -164,7 +193,7 @@ class Client:
         data: MangaResource = await self._request(f"manga/{manga_id}")
         return Manga(data["data"], self)
 
-    async def search_manga(self, query: str = "", limit: int = 1, **filters) -> List[Manga]:
+    async def search_manga(self, query: str = "", limit: int = 10) -> List[Manga]:
         """
         Searches for Mangas from the Kitsu API.
 
@@ -175,19 +204,15 @@ class Client:
         limit: :class:`int`, default: 1
             The limit of Mangas returned from this request, it is clamped
             at 20 as that is the maximum supported by the API.
-        **filters: dict, optional
-            The possible filters are: season, season_year, streamers & age_rating
 
         Returns
         -------
         List[:class:`Manga`]
         """
-        params = {"page[limit]": str(max(min(limit, 20), 1))} # Restrict limit to 1 to 20
+        params = {"page[limit]": str(max(min(limit, 20), 1))}  # Restrict limit to 1 to 20
 
         if query != "":
             params["filter[text]"] = query
-
-        await self._insert_filters(filters, params)
 
         data: MangaCollection = await self._request("manga", params=params)
 
