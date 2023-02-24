@@ -28,7 +28,7 @@ from typing import TYPE_CHECKING, Any, List, Literal, Optional
 import aiohttp
 
 from . import __version__
-from .enums import AgeRating, AnimeSubtype, Season
+from .enums import AgeRating, Season
 from .errors import BadRequest, HTTPException, NotFound
 from .models import Anime, Manga
 
@@ -113,7 +113,6 @@ class Client:
         before_year: Optional[int] = None,
         season: Optional[List[Season]] = None,
         age_rating: Optional[List[AgeRating]] = None,
-        subtype: Optional[List[AnimeSubtype]] = None,
         categories: Optional[List[str]] = None,
     ) -> List[Anime]:
         """
@@ -135,8 +134,6 @@ class Client:
             The release season(s) of the Anime to use for filtering the results.
         age_rating: Optional[List[:class:`AgeRating`]]
             The age rating(s) of the Anime to use for filtering the results.
-        subtype: Optional[List[:class:`AnimeSubtype`]]
-            The subtype(s) of the Anime to use for filtering the results.
         categories: Optional[List[:class:`str`]]
             The categories of the Anime to use for filtering the results.
 
@@ -153,13 +150,10 @@ class Client:
             params["filter[seasonYear]"] = f"{after_year or ''}..{before_year or ''}"
 
         if season is not None:
-            params["filter[season]"] = ",".join(str(season))
+            params["filter[season]"] = ",".join(str(i) for i in season)
 
         if age_rating is not None:
-            params["filter[ageRating]"] = ",".join(str(age_rating))
-
-        if subtype is not None:
-            params["fiter[subtype]"] = ",".join(str(subtype))
+            params["filter[ageRating]"] = ",".join(str(i) for i in age_rating)
 
         if categories is not None:
             params["filter[categories]"] = ",".join(categories)
