@@ -29,10 +29,10 @@ import aiohttp
 
 from . import __version__
 from .errors import BadRequest, HTTPException, NotFound
-from .models import Anime, Episode, Manga
+from .models import Anime, Manga
 
 if TYPE_CHECKING:
-    from .types import AnimeCollection, AnimeResource, EpisodeData, MangaCollection, MangaResource
+    from .types import AnimeCollection, AnimeResource, MangaCollection, MangaResource
 
 __all__ = ("Client",)
 

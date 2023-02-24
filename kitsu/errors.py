@@ -25,6 +25,8 @@ from __future__ import annotations
 
 from aiohttp import ClientResponse
 
+__all__ = ("HTTPException", "BadRequest", "NotFound")
+
 
 class HTTPException(Exception):
     """Generic API exception when the response code is a not 2xx.
