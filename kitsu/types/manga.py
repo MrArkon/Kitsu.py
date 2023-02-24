@@ -75,11 +75,11 @@ class ChapterAttributes(TypedDict):
     updatedAt: str
     synopsis: str
     titles: Dict[str, str]
-    canonicalTitle: str
+    canonicalTitle: Optional[str]
     volumeNumber: int
     number: int
-    published: str
-    length: int
+    published: Optional[str]
+    length: Optional[int]
     thumbnail: Optional[Thumbnail]
 
 
@@ -97,3 +97,9 @@ class ChapterData(TypedDict):
 
 class ChapterResource(TypedDict):
     data: ChapterData
+
+
+class ChapterCollection(TypedDict):
+    data: List[ChapterData]
+    meta: CollectionMeta
+    links: CollectionLinks
