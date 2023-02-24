@@ -80,7 +80,7 @@ class Episode:
         The season number in which this Episode appears.
     number: :class:`int`
         The Episode number.
-    relative_number :class:`int`
+    relative_number: :class:`int`
         The relative Episode number.
     length: :class:`int`
         The length of this Episode in minutes.
@@ -122,55 +122,30 @@ class Episode:
 
     @property
     def title(self) -> str:
-        """The title of this Episode.
-
-        Returns
-        -------
-        :class:`str`
-            The title of the Episode, defaults to ``en`` language key in the
-            titles mapping, fall backs to the next available key if the ``en``
-            key is not present.
+        """The title of the Episode, defaults to ``en`` language key in the
+        titles mapping, fall backs to the next available key if the ``en``
+        key is not present.
         """
         return self._titles.get("en", (list(self._titles.values())[0]))
 
     @property
     def created_at(self) -> datetime:
-        """The UTC datetime of when this Episode was created.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Episode was created."""
         return datetime.strptime(self._attributes["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """The UTC datetime of when this Episode was last updated.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Episode was last updated."""
         return datetime.strptime(self._attributes["updatedAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def airdate(self) -> datetime:
-        """The UTC datetime of when this Episode aired.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Episode aired."""
         return datetime.strptime(self._attributes["airdate"], "%Y-%m-%d")
 
     @property
     def thumbnail(self) -> Optional[str]:
-        """The URL to the thumbnail of this Episode.
-
-        Returns
-        -------
-        Optional[:class:`str`]
-        """
+        """The URL to the thumbnail of this Episode."""
         if (thumbnail := self._attributes["thumbnail"]) is not None:
             return thumbnail["original"]
 
@@ -289,98 +264,52 @@ class Anime:
 
     @property
     def url(self) -> str:
-        """The Kitsu URL to this Anime.
-
-        Returns
-        -------
-        :class:`str`
-        """
+        """The Kitsu URL to this Anime."""
         return f"https://kitsu.io/anime/{self.slug}"
 
     @property
     def title(self) -> str:
-        """The title of this Anime.
-
-        Returns
-        -------
-        :class:`str`
-            The title of the Anime, defaults to ``en`` language key in the
-            titles mapping, fall backs to the next available key if the ``en``
-            key is not present.
-        """
+        """The title of the Anime, defaults to ``en`` language key in the
+        titles mapping, fall backs to the next available key if the ``en``
+        key is not present."""
         return self._titles.get("en", (list(self._titles.values())[0]))
 
     @property
     def created_at(self) -> datetime:
-        """The UTC datetime of when this Anime was created.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Anime was created."""
         return datetime.strptime(self._attributes["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """The UTC datetime of when this Anime was last updated.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Anime was last updated."""
         return datetime.strptime(self._attributes["updatedAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def start_date(self) -> datetime:
-        """The UTC datetime of when this Anime started.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Anime started."""
         return datetime.strptime(self._attributes["startDate"], "%Y-%m-%d")
 
     @property
     def end_date(self) -> Optional[datetime]:
-        """The UTC datetime of when this Anime ended, if it has.
-
-        Returns
-        -------
-        Optional[:class:`datetime`]
-        """
+        """The UTC datetime of when this Anime ended, if it has."""
         if (payload := self._attributes["endDate"]) is not None:
             return datetime.strptime(payload, "%Y-%m-%d")
 
     @property
     def poster_image(self) -> Optional[Image]:
-        """The poster image of this Anime.
-
-        Returns
-        -------
-        :class:`Image`
-        """
+        """The poster image of this Anime."""
         if (payload := self._attributes["posterImage"]) is not None:
             return Image(payload)
 
     @property
     def cover_image(self) -> Optional[Image]:
-        """The cover image of this Anime.
-
-        Returns
-        -------
-        :class:`Image`
-        """
+        """The cover image of this Anime."""
         if (payload := self._attributes["coverImage"]) is not None:
             return Image(payload)
 
     @property
     def episodes(self) -> Optional[List[Episode]]:
-        """The episodes for this Anime.
-
-        Returns
-        -------
-        Optional[List[:class:`Episode`]]
-        """
+        """The episodes for this Anime."""
 
         if self.__episodes:
             if not self._included:
@@ -531,86 +460,46 @@ class Manga:
 
     @property
     def url(self) -> str:
-        """The Kitsu URL to this Manga.
-
-        Returns
-        -------
-        :class:`str`
-        """
+        """The Kitsu URL to this Manga."""
         return f"https://kitsu.io/manga/{self.slug}"
 
     @property
     def title(self) -> str:
-        """The title of this Manga.
-
-        Returns
-        -------
-        :class:`str`
-            The title of the Manga, defaults to ``en`` language key in the
-            titles mapping, fall backs to the next available key if the ``en``
-            key is not present.
+        """The title of the Manga, defaults to ``en`` language key in the
+        titles mapping, fall backs to the next available key if the ``en``
+        key is not present.
         """
         return self._titles.get("en", (list(self._titles.values())[0]))
 
     @property
     def created_at(self) -> datetime:
-        """The UTC datetime of when this Manga was created.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Manga was created."""
         return datetime.strptime(self._attributes["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def updated_at(self) -> Optional[datetime]:
-        """The UTC datetime of when this Manga was last updated.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Manga was last updated."""
         return datetime.strptime(self._attributes["updatedAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
 
     @property
     def start_date(self) -> datetime:
-        """The UTC datetime of when this Manga started.
-
-        Returns
-        -------
-        :class:`datetime`
-        """
+        """The UTC datetime of when this Manga started."""
         return datetime.strptime(self._attributes["startDate"], "%Y-%m-%d")
 
     @property
     def end_date(self) -> Optional[datetime]:
-        """The UTC datetime of when this Manga ended, if it has.
-
-        Returns
-        -------
-        Optional[:class:`datetime`]
-        """
+        """The UTC datetime of when this Manga ended, if it has"""
         if (payload := self._attributes["endDate"]) is not None:
             return datetime.strptime(payload, "%Y-%m-%d")
 
     @property
     def poster_image(self) -> Optional[Image]:
-        """The poster image of this Manga.
-
-        Returns
-        -------
-        :class:`Image`
-        """
+        """The poster image of this Manga."""
         if (payload := self._attributes["posterImage"]) is not None:
             return Image(payload)
 
     @property
     def cover_image(self) -> Optional[Image]:
-        """The cover image of this Manga.
-
-        Returns
-        -------
-        :class:`Image`
-        """
+        """The cover image of this Manga."""
         if (payload := self._attributes["coverImage"]) is not None:
             return Image(payload)
