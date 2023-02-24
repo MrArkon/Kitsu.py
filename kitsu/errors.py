@@ -31,8 +31,8 @@ class HTTPException(Exception):
 
     Attributes
     ----------
-    response: :class:`ClientResponse`
-        The raw response from the request.
+    response: :class:`~aiohttp.ClientResponse`
+        The raw response object from the request.
     message: :class:`str`
         The error message sent by the API.
     status: :class:`int`
@@ -48,7 +48,17 @@ class HTTPException(Exception):
 
 
 class BadRequest(HTTPException):
-    """Raised when the API query is malformed."""
+    """Raised when the API query is malformed.
+
+    Attributes
+    ----------
+    response: :class:`~aiohttp.ClientResponse`
+        The raw response object from the request.
+    message: :class:`str`
+        The error message sent by the API.
+    status: Literal[400]
+        The HTTP status code of the response.
+    """
 
     def __init__(self, response: ClientResponse, message: str) -> None:
         self.response: ClientResponse = response
@@ -58,7 +68,17 @@ class BadRequest(HTTPException):
 
 
 class NotFound(HTTPException):
-    """Raised when the requested API item was not found."""
+    """Raised when the requested API item was not found.
+
+    Attributes
+    ----------
+    response: :class:`~aiohttp.ClientResponse`
+        The raw response object from the request.
+    message: :class:`str`
+        The error message sent by the API.
+    status: Literal[404]
+        The HTTP status code of the response.
+    """
 
     def __init__(self, response: ClientResponse, message: str) -> None:
         self.response: ClientResponse = response
