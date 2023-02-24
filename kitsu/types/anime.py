@@ -23,9 +23,9 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, Literal, TypedDict
+from typing import TYPE_CHECKING, Dict, List, Literal, Optional, TypedDict
 
-from .common import CollectionLinks, CollectionMeta, Links, MediaAttributes, Relationship
+from .common import CollectionLinks, CollectionMeta, Links, MediaAttributes, Relationship, Thumbnail
 
 if TYPE_CHECKING:
     from typing_extensions import NotRequired
@@ -80,10 +80,6 @@ class AnimeCollection(TypedDict):
     links: CollectionLinks
 
 
-class EpisodeThumbnail(TypedDict):
-    original: str
-
-
 class EpisodeAttributes(TypedDict):
     createdAt: str
     updatedAt: str
@@ -95,7 +91,7 @@ class EpisodeAttributes(TypedDict):
     relativeNumber: int
     airdate: str
     length: int
-    thumbnail: EpisodeThumbnail | None
+    thumbnail: Optional[Thumbnail]
 
 
 class EpisodeRelationships:
@@ -108,6 +104,7 @@ class EpisodeData(TypedDict):
     type: Literal["episodes"]
     links: Links
     attributes: EpisodeAttributes
+    relationships: EpisodeRelationships
 
 
 class EpisodeResource(TypedDict):

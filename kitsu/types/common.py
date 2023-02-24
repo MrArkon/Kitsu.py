@@ -52,6 +52,10 @@ class MediaAttributes(TypedDict):
     status: Literal["current", "finished", "tba", "unreleased", "upcoming"]
 
 
+class Thumbnail(TypedDict):
+    original: str
+
+
 class ImageDimension(TypedDict):
     width: Optional[str]
     height: Optional[str]
