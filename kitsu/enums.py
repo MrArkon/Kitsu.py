@@ -24,6 +24,8 @@ SOFTWARE.
 
 from enum import Enum
 
+__all__ = ("AgeRating", "Status", "Season", "AnimeSubtype", "MangaSubtype")
+
 
 class AgeRating(Enum):
     G = "G"

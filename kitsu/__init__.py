@@ -31,6 +31,7 @@ __copyright__ = "Copyright 2021-present MrArkon"
 import logging
 
 from .client import *
+from .enums import *
 from .errors import *
 from .models import *
 
