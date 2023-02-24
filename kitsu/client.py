@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING, Any, List, Literal, Optional
 import aiohttp
 
 from . import __version__
+from .enums import AgeRating, AnimeSubtype, Season
 from .errors import BadRequest, HTTPException, NotFound
 from .models import Anime, Manga
 
@@ -110,9 +111,9 @@ class Client:
         text: Optional[str] = None,
         after_year: Optional[int] = None,
         before_year: Optional[int] = None,
-        season: Optional[List[Literal["spring", "summer", "fall", "winter"]]] = None,
-        age_rating: Optional[List[Literal["G", "PG", "R", "R18"]]] = None,
-        subtype: Optional[List[Literal["ONA", "OVA", "TV", "movie", "music", "special"]]] = None,
+        season: Optional[List[Season]] = None,
+        age_rating: Optional[List[AgeRating]] = None,
+        subtype: Optional[List[AnimeSubtype]] = None,
         categories: Optional[List[str]] = None,
     ) -> List[Anime]:
         """
@@ -130,11 +131,11 @@ class Client:
             The upper limit of the release year of the Anime to use for filtering the results.
         before_year: Optional[:class:`int`]
             The upper limit of the release year of the Anime to use for filtering the results.
-        season: Optional[List[Literal["spring", "summer", "fall", "winter"]]]
+        season: Optional[List[:class:`Season`]]
             The release season(s) of the Anime to use for filtering the results.
-        age_rating: Optional[List[Literal["G", "PG", "R", "R18"]]]
+        age_rating: Optional[List[:class:`AgeRating`]]
             The age rating(s) of the Anime to use for filtering the results.
-        subtype: Optional[List[Literal["ONA", "OVA", "TV", "movie", "music", "special"]]]
+        subtype: Optional[List[:class:`AnimeSubtype`]]
             The subtype(s) of the Anime to use for filtering the results.
         categories: Optional[List[:class:`str`]]
             The categories of the Anime to use for filtering the results.
@@ -152,13 +153,13 @@ class Client:
             params["filter[seasonYear]"] = f"{after_year or ''}..{before_year or ''}"
 
         if season is not None:
-            params["filter[season]"] = ",".join(season)
+            params["filter[season]"] = ",".join(str(season))
 
         if age_rating is not None:
-            params["filter[ageRating]"] = ",".join(age_rating)
+            params["filter[ageRating]"] = ",".join(str(age_rating))
 
         if subtype is not None:
-            params["fiter[subtype]"] = ",".join(subtype)
+            params["fiter[subtype]"] = ",".join(str(subtype))
 
         if categories is not None:
             params["filter[categories]"] = ",".join(categories)

@@ -26,6 +26,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING, List, Optional
 
+from .enums import AgeRating, AnimeSubtype, MangaSubtype, Status
+
 if TYPE_CHECKING:
     from .client import Client
     from .types import AnimeData, EpisodeCollection, EpisodeData
@@ -181,13 +183,13 @@ class Anime:
         The popularity rank of this Anime on Kitsu.
     rating_rank: :class:`int`
         The rating rank of this Anime on Kitsu.
-    age_rating: Literal["G", "PG", "R", "R18"]
+    age_rating: :class:`AgeRating`
         The age rating of this Anime.
     age_rating_guide: :class:`str`
         A string describing the age rating of this Anime.
-    subtype: Literal["ONA", "OVA", "TV", "movie", "music", "special"]
+    subtype: :class:`AnimeSubtype`
         The subtype of this Anime.
-    status: Literal["current", "finished", "tba", "unreleased", "upcoming"]
+    status: :class:`Status`
         The status of this Anime.
     episode_count: :class:`int`
         The number of episodes in this Anime.
@@ -247,10 +249,10 @@ class Anime:
         self.favorites_count = self._attributes["favoritesCount"]
         self.popularity_rank = self._attributes["popularityRank"]
         self.rating_rank = self._attributes["ratingRank"]
-        self.age_rating = self._attributes["ageRating"]
+        self.age_rating = AgeRating(self._attributes["ageRating"])
         self.age_rating_guide = self._attributes["ageRatingGuide"]
-        self.subtype = self._attributes["subtype"]
-        self.status = self._attributes["status"]
+        self.subtype = AnimeSubtype(self._attributes["subtype"])
+        self.status = Status(self._attributes["status"])
         self.episode_count = self._attributes["episodeCount"]
         self.episode_length = self._attributes["episodeLength"]
         self.youtube_video_id = self._attributes["youtubeVideoId"]
@@ -386,13 +388,13 @@ class Manga:
         The popularity rank of this Manga on Kitsu.
     rating_rank: :class:`int`
         The rating rank of this Manga on Kitsu.
-    age_rating: Optional[Literal["G", "PG", "R", "R18"]]
+    age_rating: :class:`AgeRating`
         The age rating of this Manga.
     age_rating_guide: Optional[:class:`str`]
         A string describing the age rating of this Manga.
-    subtype: Literal["doujin", "manga", "manhua", "manhwa", "novel", "oel", "oneshot"]
+    subtype: :class:`MangaSubtype`
         The subtype of this Manga.
-    status: Literal["current", "finished", "tba", "unreleased", "upcoming"]
+    status: :class:`Status`
         The status of this Manga.
     chapter_count: :class:`int`
         The number of chapters in the Manga.
@@ -446,10 +448,10 @@ class Manga:
         self.favorites_count = self._attributes["favoritesCount"]
         self.popularity_rank = self._attributes["popularityRank"]
         self.rating_rank = self._attributes["ratingRank"]
-        self.age_rating = self._attributes["ageRating"]
+        self.age_rating = AgeRating(self._attributes["ageRating"])
         self.age_rating_guide = self._attributes["ageRatingGuide"]
-        self.subtype = self._attributes["subtype"]
-        self.status = self._attributes["status"]
+        self.subtype = MangaSubtype(self._attributes["subtype"])
+        self.status = Status(self._attributes["status"])
         self.chapter_count = self._attributes["chapterCount"]
         self.volume_count = self._attributes["volumeCount"]
         self.serialization = self._attributes["serialization"]
