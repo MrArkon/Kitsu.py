@@ -6,7 +6,6 @@ __pycache__/
 
 # Tools Files & Folders
 .vscode/
-poetry.lock
 
 # Documentation Files & Folders
 docs/build
