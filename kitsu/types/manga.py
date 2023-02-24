@@ -21,9 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import List, Literal, TypedDict
+from typing import Dict, List, Literal, Optional, TypedDict
 
-from .common import CollectionLinks, CollectionMeta, Links, MediaAttributes, Relationship
+from .common import CollectionLinks, CollectionMeta, Links, MediaAttributes, Relationship, Thumbnail
 
 __all__ = ("MangaCollection", "MangaData", "MangaResource")
 
@@ -68,3 +68,32 @@ class MangaCollection(TypedDict):
     data: List[MangaData]
     meta: CollectionMeta
     links: CollectionLinks
+
+
+class ChapterAttributes(TypedDict):
+    createdAt: str
+    updatedAt: str
+    synopsis: str
+    titles: Dict[str, str]
+    canonicalTitle: str
+    volumeNumber: int
+    number: int
+    published: str
+    length: int
+    thumbnail: Optional[Thumbnail]
+
+
+class ChapterRelationships(TypedDict):
+    manga: Relationship
+
+
+class ChapterData(TypedDict):
+    id: str
+    type: Literal["chapters"]
+    links: Links
+    attributes: ChapterAttributes
+    relationships: ChapterRelationships
+
+
+class ChapterResource(TypedDict):
+    data: ChapterData
