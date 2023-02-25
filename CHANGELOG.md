@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- Types for most of the API responses.
+- Library exceptions to the docs.
+- Added `AgeRating`, `Status`, `Season`, `AnimeSubtype`, `MangaSubtype`
+
+### Removed
+- Removed `Title` for a simplified title property to both `Anime` and `Manga`.
+
+### Changed
+- Refactored and moved all of the API models to a models folder.
+- Improved searching with various filters.
+- Updated the docstrings for most models.
+
 ## [1.1.2] - 2022-10-29
 ### Removed
 - `raw` keyword argument completely
