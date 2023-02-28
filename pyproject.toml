@@ -53,16 +53,12 @@ line-length = 125
 
 [tool.isort]
 profile = "black"
-line_length = 120
-multi_line_output = 3
+combine_as_imports = true
 combine_star = true
-star_first = true
-include_trailing_comma = true
-dedup_headings = true
-known_first_party = "poetry"
+line_length = 125
 
 [tool.pyright]
 include = ["kitsu"]
 useLibraryCodeForTypes = true
-pythonVersion = "3.10"
+pythonVersion = "3.8"
 reportOptionalMemberAccess = false
