@@ -25,7 +25,7 @@ from typing import Dict, List, Literal, Optional, TypedDict
 
 from .common import CollectionLinks, CollectionMeta, Links, MediaAttributes, Relationship, Thumbnail
 
-__all__ = ("MangaCollection", "MangaData", "MangaResource")
+__all__ = ("MangaCollection", "MangaData", "MangaResource", "ChapterCollection", "ChapterData", "ChapterResource")
 
 
 class MangaAttributes(MediaAttributes, TypedDict):

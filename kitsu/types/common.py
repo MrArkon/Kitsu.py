@@ -28,6 +28,8 @@ from typing import TYPE_CHECKING, Dict, List, Literal, Optional, TypedDict
 if TYPE_CHECKING:
     from typing_extensions import NotRequired
 
+__all__ = ("Image",)
+
 
 class MediaAttributes(TypedDict):
     createdAt: str
